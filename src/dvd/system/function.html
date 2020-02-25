@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>菜单管理</title>
+</head>
+
+<body>
+<div class="super-theme-example">
+    <div class="search-form-item col-md-4">
+        <label class="label-top">菜单名称：</label>
+        <input name="functionName" class="easyui-validatebox easyui-textbox" prompt="请输入菜单名称">
+    </div>
+
+    <div class="search-form-item col-md-3">
+        <a href="javascript:void(0)" onclick="refreshCompanyFunction()" class="easyui-linkbutton primary">查询</a>
+        <a href="javascript:void(0)" onclick="addCompanyFunction()" class="easyui-linkbutton primary">新增菜单</a>
+    </div>
+</div>
+
+<div class="clear"></div>
+<div class="super-theme-example">
+    <div style="height: 400px;">
+        <table id="companyFunctionTab"></table>
+    </div>
+
+    <div id="companyFunctionWin" style="display: none;padding-top:30px;" title="新增菜单">
+        <form id="companyFunctionForm" method="post">
+            <input type="hidden" name="id" />
+            <div class="form-item col-md-12">
+                <label class="label-top col-md-1">父菜单：</label>
+
+                <input role="tree_functionTree_input" data-type="tree-input" type="text" name="parentId" value="" class="hide"/>
+                <ul id="tree_functionTree" class="ztree" style="float: left;"></ul>
+            </div>
+
+            <div class="form-item col-md-12">
+                <label class="label-top">菜单名称：</label>
+                <input id="companyFunctionForm_functionName" class="easyui-validatebox easyui-textbox" prompt="请输入菜单名称" name="functionName" data-options="required:true, missingMessage:'请输入菜单名称'">
+            </div>
+
+            <div class="form-item col-md-12">
+                <label class="label-top">菜单路径：</label>
+                <input id="companyFunctionForm_action" class="easyui-validatebox easyui-textbox" prompt="请输入菜单路径" name="action" data-options="required:true, missingMessage:'请输入菜单路径'">
+            </div>
+
+            <div class="form-item col-md-12">
+                <label class="label-top">是否显示：</label>
+                <label class="radio-inline">
+                    <input type="radio" name="display" value="1" checked> 显示
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="display" value="0"> 隐藏
+                </label>
+            </div>
+
+            <div class="form-item col-md-12">
+                <label class="label-top">排序号：</label>
+                <input id="companyFunctionForm_sort" class="easyui-validatebox easyui-textbox" prompt="请输入排序号" name="sort" data-options="required:true, missingMessage:'请输入排序号', validType:'isNumber'">
+            </div>
+
+            <div class="form-item col-md-12">
+                <label class="label-top">菜单图标：</label>
+                <input id="companyFunctionForm_icon" class="easyui-textbox" prompt="请输入菜单图标" name="icon">
+            </div>
+
+            <div class="form-item col-md-12">
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="saveCompanyFunction()">保存</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="cancelCompanyFunction()">取消</a>
+            </div>
+        </form>
+    </div>
+
+    <div id="companyFunctionDetailWin" style="display: none;padding-top:30px;" title="菜单详情">
+        <div class="form-item col-md-12">
+            <label class="label-top col-md-1">父菜单：</label>
+            <label class="label-top parentFunctionNameLabel"></label>
+        </div>
+
+        <div class="form-item col-md-12">
+            <label class="label-top">菜单名称：</label>
+            <label class="label-top companyFunctionForm_functionNameLabel"></label>
+        </div>
+
+        <div class="form-item col-md-12">
+            <label class="label-top">菜单路径：</label>
+            <label class="label-top companyFunctionForm_actionLabel"></label>
+        </div>
+
+        <div class="form-item col-md-12">
+            <label class="label-top">是否显示：</label>
+            <label class="label-top displayLabel"></label>
+        </div>
+
+        <div class="form-item col-md-12">
+            <label class="label-top">排序号：</label>
+            <label class="label-top companyFunctionForm_sortLabel"></label>
+        </div>
+
+        <div class="form-item col-md-12">
+            <label class="label-top">菜单图标：</label>
+            <label class="label-top companyFunctionForm_iconLabel"></label>
+        </div>
+
+        <div class="form-item col-md-12">
+            <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="closeCompanyFunctionDetail()">关闭</a>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    ;(function ($, window, document, undefined){
+
+        $('#companyFunctionTab').datagrid({
+            url: App.href + '/api/common/companyFunction/list',
+            fit: true,
+            pagination: true,
+            fitColumns: true,
+            method: 'GET',
+            pageSize: 10,
+            pageList: [10, 25, 50, 100, 200],
+            height: 400,
+            queryParams: {},
+            toolbar: [],
+            loadFilter: function(data) {
+                if (data.code === 401) {
+                    App.showMsg('token失效,请登录!');
+                    window.location.href = App.href + '/login.html';
+                    return {"total":0, "rows": "[]"};
+                } else {
+                    return data;
+                }
+            },
+            onBeforeLoad: function (param) {
+                var functionName = $("input[name=functionName]").val();
+
+                param.functionName = functionName;
+            },
+            columns: [
+                [{
+                    field: 'id',
+                    title: '序号',
+                    sortable: true,
+                    width: 20
+                }, {
+                    field: 'parentId',
+                    title: '父id',
+                    sortable: true,
+                    width: 20
+                }, {
+                    field: 'functionName',
+                    title: '菜单名称',
+                    width: 30
+                }, {
+                    field: 'action',
+                    title: '菜单路径',
+                    width: 100
+                }, {
+                    field: 'sort',
+                    title: '排序号',
+                    sortable: true,
+                    width: 30
+                }, {
+                    field: 'ctime',
+                    title: '创建时间',
+                    sortable: true,
+                    width: 50
+                }, {
+                    field: 'custom_col1',
+                    title: '操作',
+                    width: 50,
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var btns = new Array();
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="showCompanyFunction('+ row.id +')">查看</a>&nbsp;');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateCompanyFunction('+ row.id +')">修改</a>');
+                        return btns.join('');
+                    }
+                }]
+            ]
+        });
+
+        $('#companyFunctionForm').form({
+            url: App.href + '/api/common/companyFunction/saveCompanyFunction',
+            method: 'POST',
+            onSubmit:function(){
+                return $(this).form('validate');
+            },
+            success:function(data){
+                var obj = JSON.parse(data);
+                if (obj.code == 200) {
+                    App.showMsg('保存成功');
+                    $('#companyFunctionWin').window('close');
+                } else {
+                    App.showMsg(obj.message);
+                }
+                refreshCompanyFunction();
+            }
+        });
+
+    })(jQuery, window, document);
+
+    /**
+     * 初始化菜单树
+     */
+    function initFunctionTree() {
+        $.fn.zTree.init($("#tree_functionTree"), App.treeSetting({
+            url: App.href + "/api/common/companyFunction/treeNodes",
+            expandAll: true,
+            autoParam: ["id", "name", "pId"],
+            chkStyle: "radio"
+        }));
+    }
+
+    function refreshCompanyFunction() {
+        $('#companyFunctionTab').datagrid('reload');
+    }
+
+    /**
+     * 添加公司角色
+     *
+     */
+    function addCompanyFunction() {
+        $('#companyFunctionWin').window({
+            width: "80%",
+            height: "80%",
+            modal:true
+        });
+
+        initFunctionTree();
+        $('#companyFunctionForm').form({'url': App.href + '/api/common/companyFunction/saveCompanyFunction'});
+        $('#companyFunctionWin').window({title: '添加菜单'});
+
+        $("#companyFunctionForm").find("input[name=id]").val('');
+        $("#companyFunctionForm_functionName").textbox('setValue', '');
+        $("#companyFunctionForm_action").textbox('setValue', '');
+        $("#companyFunctionForm_sort").textbox('setValue', '');
+        $("#companyFunctionForm_icon").textbox('setValue', '');
+        $('#companyFunctionForm').find('input[name=parentId]').attr('value', '');
+    }
+
+    /**
+     * 保存菜单信息
+     */
+    function saveCompanyFunction() {
+        $('#companyFunctionForm').submit();
+    }
+
+    /**
+     * 取消新增权限
+     */
+    function cancelCompanyFunction() {
+        $('#companyFunctionWin').window('close');
+    }
+
+    /**
+     * 修改公司菜单信息
+     *
+     * @param id
+     */
+    function updateCompanyFunction(id) {
+        $('#companyFunctionWin').window({
+            width: "80%",
+            height: "80%",
+            modal:true
+        });
+
+        App.getRequestData('/api/common/companyFunction/getCompanyFunction', {'id': id}, function(data){
+            $('#companyFunctionForm').form({'url': App.href + '/api/common/companyFunction/updateCompanyFunction'});
+            $('#companyFunctionWin').window({title: '更新菜单'});
+
+            $("#companyFunctionForm").find("input[name=id]").val(data.id);
+            $("#companyFunctionForm_functionName").textbox('setValue', data.functionName);
+            $("#companyFunctionForm_action").textbox('setValue', data.action);
+            $("#companyFunctionForm_sort").textbox('setValue', data.sort);
+            $("#companyFunctionForm_icon").textbox('setValue', data.icon);
+            $("#companyFunctionForm").find("");
+
+            if(data.parentId) {
+                $('#companyFunctionForm').find('input[name=parentId]').attr('value', data.parentId);
+            }
+            initFunctionTree();
+        });
+    }
+
+    /**
+     * 展示公司菜单详情信息
+     *
+     * @param id
+     */
+    function showCompanyFunction(id) {
+        $('#companyFunctionDetailWin').window({
+            width: "80%",
+            height: "80%",
+            modal:true
+        });
+
+        App.getRequestData('/api/common/companyFunction/getCompanyFunction', {'id': id}, function(data){
+            var displayStr = "隐藏";
+            if(data.display == 1) {
+                displayStr = "显示";
+            }
+
+            $(".parentFunctionNameLabel").text(data.parentFunctionName);
+            $(".companyFunctionForm_functionNameLabel").text(data.functionName);
+            $(".companyFunctionForm_actionLabel").text(data.action);
+            $(".displayLabel").text(displayStr);
+            $(".companyFunctionForm_sortLabel").text(data.sort);
+            $(".companyFunctionForm_iconLabel").text(data.icon);
+        });
+
+    }
+
+    /**
+     * 关闭公司菜单详情
+     */
+    function closeCompanyFunctionDetail() {
+        $("#companyFunctionDetailWin").window('close');
+    }
+
+</script>
+</body>
+
+</html>

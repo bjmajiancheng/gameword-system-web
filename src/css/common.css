@@ -1,0 +1,217 @@
+.form-item {
+    margin-left: 15px;
+    margin-bottom: 15px;
+    float: left;
+}
+
+.form-item>label {
+    min-width: 107px;
+    display: inline-block;
+}
+
+.form-item input, select {
+    width: 170px;
+}
+
+.search-form-item {
+    margin-left: 15px;
+    margin-bottom: 15px;
+    float: left;
+}
+
+.search-form-item>label {
+    min-width: 72px;
+    display: inline-block;
+}
+
+.search-form-item input, select {
+    width: 170px;
+}
+
+.clear{
+    clear:both
+}
+
+.align_center {
+    text-align: center
+}
+
+.align_left {
+    text-align: center
+}
+
+.align_right {
+    text-align: center
+}
+
+.l-btn {
+    margin-right: 15px;
+}
+
+.amap_lib_placeSearch .poibox.highlight {
+    background-color: #CAE1FF;
+}
+
+.amap_lib_placeSearch .poi-more {
+    display: none!important;
+}
+
+.normal_top_arrow {
+    display: inline-block;
+    width: 80px;
+    height: 110px;
+    box-shadow: 0px 0px 0px 25px #ffffff inset;
+    background-color: #ff0000;
+}
+.normal_top_arrow::after {
+    content: "";
+    position: relative;
+    top: -15px;
+    border-bottom: 40px solid #ff0000;
+    border-left: 40px solid transparent;
+    border-right: 40px solid transparent;
+}
+
+.normal_bottom_arrow {
+    display: inline-block;
+    width: 80px;
+    height: 110px;
+    box-shadow: 0px 0px 0px 25px #ffffff inset;
+    background-color: #ff0000;
+}
+.normal_bottom_arrow::after {
+    content: "";
+    position: relative;
+    top: 100%;
+    border-top: 40px solid #ff0000;
+    border-left: 40px solid transparent;
+    border-right: 40px solid transparent;
+}
+
+.normal_left_arrow {
+    display: inline-block;
+    width: 110px;
+    height: 80px;
+    box-shadow: 0px 0px 0px 25px #ffffff inset;
+    background-color: #ff0000;
+}
+.normal_left_arrow::after {
+    content: "";
+    display: inline-block;
+    border-right: 40px solid #ff0000;
+    border-top: 40px solid transparent;
+    border-bottom: 40px solid transparent;
+}
+
+.normal_right_arrow {
+    display: inline-block;
+    width: 120px;
+    height: 80px;
+    box-shadow: 0px 0px 0px 25px #ffffff inset;
+    background-color: #ff0000;
+}
+.normal_right_arrow::after {
+    content: "";
+    display: inline-block;
+    position: relative;
+    left: 80px;
+    border-left: 40px solid #ff0000;
+    border-top: 40px solid transparent;
+    border-bottom: 40px solid transparent;
+}
+
+
+.right_bottom_arrow {
+    display: inline-block;
+    width: 110px;
+    height: 80px;
+    box-shadow: -1px -1px 0px 25px #ffffff inset, 1px 1px 0px 25px #ffffff inset;
+    background-color: #ff0000;
+    transform: rotate(45deg);
+}
+.right_bottom_arrow::after {
+    content: "";
+    display: inline-block;
+    position: relative;
+    left: 80px;
+    border-left: 40px solid #ff0000;
+    border-top: 40px solid transparent;
+    border-bottom: 40px solid transparent;
+}
+
+.left_bottom_arrow {
+    display: inline-block;
+    width: 110px;
+    height: 80px;
+    box-shadow: -1px -1px 0px 25px #ffffff inset, 1px 1px 0px 25px #ffffff inset;
+    background-color: #ff0000;
+    transform: rotate(135deg);
+}
+.left_bottom_arrow::after {
+    content: "";
+    display: inline-block;
+    position: relative;
+    left: 80px;
+    border-left: 40px solid #ff0000;
+    border-top: 40px solid transparent;
+    border-bottom: 40px solid transparent;
+}
+
+.right_top_arrow {
+    display: inline-block;
+    width: 110px;
+    height: 80px;
+    box-shadow: -1px -1px 0px 25px #ffffff inset, 1px 1px 0px 25px #ffffff inset;
+    background-color: #ff0000;
+    transform: rotate(-45deg);
+}
+.right_top_arrow::after {
+    content: "";
+    display: inline-block;
+    position: relative;
+    left: 80px;
+    border-left: 40px solid #ff0000;
+    border-top: 40px solid transparent;
+    border-bottom: 40px solid transparent;
+}
+
+.left_top_arrow {
+    display: inline-block;
+    width: 110px;
+    height: 80px;
+    box-shadow: -1px -1px 0px 25px #ffffff inset, 1px 1px 0px 25px #ffffff inset;
+    background-color: #ff0000;
+    transform: rotate(-135deg);
+}
+.left_top_arrow::after {
+    content: "";
+    display: inline-block;
+    position: relative;
+    left: 80px;
+    border-left: 40px solid #ff0000;
+    border-top: 40px solid transparent;
+    border-bottom: 40px solid transparent;
+}
+
+.wind_direction {
+    background-image: url('../cdn/img/direction.jpg');
+    background-position: center center;
+    width:300px;
+    height:300px;
+    background-size:80% 80%;
+    background-repeat: no-repeat;
+
+}
+
+.wind_direction_text
+{
+    font-size: 15px;
+    color: #337ab7;
+}
+
+.wind_direction_text_active
+{
+    font-size: 15px;
+    color: red;
+}
+

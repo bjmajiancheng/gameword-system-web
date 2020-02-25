@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>首页</title>
+    <!--开发-->
+    <!--<link rel="stylesheet" href="../easyui/themes/gray/easyui.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/superBlue.css" id="themeCss">
+    <script src="js/super.js" type="text/javascript" charset="utf-8"></script>-->
+    <!--测试dist-->
+    <!-- jQuery UI -->
+    <link href="cdn/vendors/jquery-ui/jquery-ui.min.css" rel="stylesheet" media="screen">
+    <link href="cdn/vendors/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="cdn/vendors/bootstrap-fileinput/bootstrap-fileinput.css" rel="stylesheet" media="screen">
+    <link href="cdn/vendors/jquery-file-upload/css/jquery.fileupload.css" rel="stylesheet" media="screen">
+    <link href="cdn/vendors/jquery-file-upload/css/jquery.fileupload-ui.css" rel="stylesheet" media="screen">
+    <link href="cdn/vendors/zTree/css/zTreeStyle/zTreeStyle.css" rel="stylesheet">
+    <link href="cdn/vendors/jquery-easyui-texteditor/texteditor.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="cdn/vendors/jquery-easyui-1.7.0/themes/gray/easyui.css">
+    <!--<link rel="stylesheet" href="cdn/vendors/easyui/themes/gray/easyui.css">-->
+    <link rel="stylesheet" href="cdn/super/css/font-awesome.min.css">
+    <link rel="stylesheet" href="cdn/super/superBlue.css" id="themeCss">
+    <link rel="stylesheet" href="css/common.css">
+
+</head>
+
+<body id="main" class="easyui-layout">
+<div data-options="region:'north',border:false" class="super-north">
+    <!--顶部-->
+    <div class="super-navigation">
+        <!--系统名称-->
+        <div class="super-navigation-title">企业运营后台</div>
+        <!--自定义导航-->
+        <div class="super-navigation-main">
+            <div class="super-setting-left">
+                <ul>
+                    <li><i class="fa fa-home" id="index_btn"></i>首页</li>
+                    <li><i class="fa fa-sign-out" id="logout"></i>注销</li>
+                </ul>
+            </div>
+            <div class="super-setting-right">
+                <ul>
+                    <li>
+                        <!--<div class="super-setting-icon">
+                            <i class="fa fa-gears"></i>
+                        </div>
+                        <div id="mm" class="easyui-menu">
+                            <div>个人中心</div>
+                            <div id="themeSetting">主题</div>
+                            <div class="menu-sep"></div>
+                            <div id="logout">退出</div>
+                        </div>-->
+                    </li>
+                    <li id="updatePass"><i class="fa fa-pencil-square-o" ></i>修改密码</li>
+                    <li class="user">
+                        <span class="user-icon"><!--<img src="cdn/img/favicon.png"/>--></span><span id="gUserName"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div data-options="region:'west',title:'企业运营后台',border:false" class="super-west">
+    <!--左侧导航 style="display:none;"-->
+    <div class="easyui-accordion" data-options="border:false,fit:true,selected:true" id="vertical-menu" >
+
+    </div>
+</div>
+<div data-options="region:'center'" style="padding-top: 2px;">
+    <!--主要内容-->
+    <div id="tt" class="easyui-tabs" data-options="border:false,fit:true">
+        <div title="首页" data-options="iconCls:'fa fa-home'">
+            <div style="padding: 20px;">
+                欢迎回来！
+            </div>
+        </div>
+    </div>
+</div>
+<div data-options="region:'south'" class="super-south">
+    <!--页脚-->
+    <div class="super-footer-info">
+        <!--<span><i class="fa fa-info-circle"></i> 作者：tianyu</span>-->
+        <span><i class="fa fa-copyright"></i> CopyRight 2019 版权所有 <i class="fa fa-caret-right"></i></span>
+    </div>
+</div>
+
+<!--主题设置弹窗-->
+<div id="win">
+    <div class="themeItem">
+        <ul>
+            <li>
+                <div class="superGreen" style="background: #1abc9c;">green</div>
+            </li>
+            <li class="themeActive">
+                <div class="superBlue" style="background: #3498db;">blue</div>
+            </li>
+            <li>
+                <div class="superGray" style="background: #95a5a6;">gray</div>
+            </li>
+            <li>
+                <div class="superAmethyst" style="background: #9b59b6;">amethyst</div>
+            </li>
+            <li>
+                <div class="superBlack" style="background: #34495e;">black</div>
+            </li>
+            <li>
+                <div class="superYellow" style="background: #e67e22;">yellow</div>
+            </li>
+            <li>
+                <div class="superEmerald" style="background: #2ecc71;">emerald</div>
+            </li>
+            <li>
+                <div class="superRed" style="background: #e74c3c;">red</div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- 密码修改 -->
+<div id="updatePassWin" style="display: none;padding-top:30px;padding-left:100px;" title="修改密码">
+    <form id="userPassForm" method="post">
+        <div class="form-item col-md-10">
+            <label class="label-top">原密码：</label>
+            <input id="userPass_password" class="easyui-validatebox easyui-passwordbox" prompt="请输入原密码" name="password" data-options="required:true, missingMessage:'请输入原密码'">
+        </div>
+        <div class="form-item col-md-10">
+            <label class="label-top">新密码：</label>
+            <input id="userPass_newPassword" class="easyui-validatebox easyui-passwordbox" prompt="请输入新密码" name="newPassword" data-options="required:true, missingMessage:'请输入新密码'">
+        </div>
+        <div class="form-item col-md-10">
+            <label class="label-top">确认密码：</label>
+            <input  id="userPass_confirmPassword" class="easyui-validatebox easyui-passwordbox" prompt="请输入确认密码" name="confirmPassword" data-options="required:true, missingMessage:'请输入确认密码'">
+        </div>
+        <div class="form-item col-md-10">
+            <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="savePassInfo()">保存</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="cancelPassInfo()">取消</a>
+        </div>
+    </form>
+</div>
+
+<!--easyui-->
+<!--<script src="cdn/vendors/easyui/jquery.min.js" type="text/javascript" charset="utf-8"></script>-->
+<script src="cdn/vendors/jquery-easyui-1.7.0/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="cdn/vendors/jquery-ui/jquery-ui.min.js"></script>
+<script src="cdn/vendors/jquery.validate.min.js"></script>
+
+<script src="cdn/vendors/bootstrap/js/bootstrap.js"></script>
+<script src="cdn/vendors/bootbox.js"></script>
+<script src="cdn/vendors/jquery.tmpl.min.js"></script>
+<script src="cdn/vendors/ajaxfileupload.js"></script>
+<script src="cdn/vendors/jquery.cookie/jquery.cookie.js"></script>
+<script src="cdn/vendors/bootstrap-fileinput/bootstrap-fileinput.js"></script>
+<script src="cdn/vendors/jquery-file-upload/js/jquery.fileupload.js"></script>
+<script src="cdn/vendors/jquery-file-upload/js/jquery.fileupload-jquery-ui.js"></script>
+<script src="cdn/vendors/zTree/js/jquery.ztree.core-3.5.min.js"></script>
+<script src="cdn/vendors/zTree/js/jquery.ztree.excheck-3.5.min.js"></script>
+<script src="cdn/vendors/zTree/js/jquery.ztree.exedit-3.5.min.js"></script>
+
+<script src="js/app.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/nav.js" type="text/javascript" charset="utf-8"></script>
+
+<!--<script src="cdn/vendors/easyui/jquery.easyui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="cdn/vendors/easyui/locale/easyui-lang-zh_CN.js" type="text/javascript" charset="utf-8"></script>-->
+
+<script src="cdn/vendors/jquery-easyui-1.7.0/jquery.easyui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="cdn/vendors/jquery-easyui-1.7.0/locale/easyui-lang-zh_CN.js" type="text/javascript" charset="utf-8"></script>
+
+<script src="cdn/vendors/jquery-easyui-texteditor/jquery.texteditor.js"></script>
+<!--<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=I9koTHOWtxzVXA60W8SyGDkObzLlrYFM"></script>-->
+<script type="text/javascript" src='http://webapi.amap.com/maps?v=1.4.15&key=8cd0ea9ca69f8e9e6a61d84c5ca3436f&plugin=AMap.PlaceSearch'></script>
+<script type="text/javascript" src='http://webapi.amap.com/maps?v=1.4.15&key=f91e3b7c163fa4411d39c0fd497cbde9&plugin=AMap.Geocoder'></script>
+<script src="http://webapi.amap.com/ui/1.0/main.js?v=1.0.11"></script>
+
+<script src="cdn/super/super.js"></script>
+<script src="cdn/super/superDemo.js" type="text/javascript" charset="utf-8"></script>
+
+<script src="js/common.js" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/javascript">
+    ;(function ($, window, document, undefined){
+        window.App.page = {};
+        window.App.page.urls = [
+            "dvd/system/function.html",
+            "dvd/system/role.html",
+            "dvd/system/user.html",
+            "dvd/system/dept.html",
+            "dvd/company/company.html",
+            "dvd/company/coolplayBase.html",
+            "dvd/company/companyCircle.html"
+        ];
+
+        $('#userPassForm').form({
+            url: App.href + '/api/common/companyUser/updateUserPass',
+            method: 'POST',
+            onSubmit:function(){
+                return $(this).form('validate');
+            },
+            success:function(data){
+                var obj = JSON.parse(data);
+                if (obj.code == 200) {
+                    App.showMsg('保存成功');
+                    $('#updatePassWin').window('close');
+                    window.location.href = App.href + "/login.html";
+                } else {
+                    App.showMsg(obj.message);
+                }
+            }
+        });
+
+    })(jQuery, window, document);
+
+    /**
+     * 修改密码提交
+     */
+    function savePassInfo() {
+        var newPassword = $('#userPass_newPassword').textbox('getValue');
+        var confirmPassword = $('#userPass_confirmPassword').textbox('getValue');
+        if(newPassword != confirmPassword) {
+            App.showMsg('新密码和确认密码不一致， 请修改~');
+            return false;
+        }
+
+        $('#userPassForm').submit();
+    }
+
+    /**
+     * 关闭修改密码窗口
+     */
+    function cancelPassInfo() {
+        $('#updatePassWin').window('close');
+    }
+
+</script>
+</body>
+
+</html>

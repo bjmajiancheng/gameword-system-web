@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>企业注册</title>
+
+    <link href="cdn/vendors/jquery-ui/jquery-ui.min.css" rel="stylesheet" media="screen">
+    <link href="cdn/vendors/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="cdn/vendors/bootstrap-fileinput/bootstrap-fileinput.css" rel="stylesheet" media="screen">
+    <link href="cdn/vendors/jquery-file-upload/css/jquery.fileupload.css" rel="stylesheet" media="screen">
+    <link href="cdn/vendors/jquery-file-upload/css/jquery.fileupload-ui.css" rel="stylesheet" media="screen">
+    <link href="cdn/vendors/zTree/css/zTreeStyle/zTreeStyle.css" rel="stylesheet">
+    <link href="cdn/vendors/jquery-easyui-texteditor/texteditor.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="cdn/vendors/jquery-easyui-1.7.0/themes/gray/easyui.css">
+    <!--<link rel="stylesheet" href="cdn/vendors/easyui/themes/gray/easyui.css">-->
+    <link rel="stylesheet" href="cdn/super/css/font-awesome.min.css">
+    <link rel="stylesheet" href="cdn/super/superBlue.css" id="themeCss">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" type="text/css" href="css/register.css"/>
+    <style type="text/css">
+        #companyPosMap {
+            width: 100%;
+            height: 100%;
+            margin: 0px;
+            font-size: 13px;
+        }
+
+        #pickerBox {
+            position: absolute;
+            z-index: 9999;
+            top: 50px;
+            right: 30px;
+            width: 300px;
+        }
+
+        #pickerInput {
+            width: 200px;
+            padding: 5px 5px;
+        }
+
+        #poiInfo {
+            background: #fff;
+        }
+
+        .amap_lib_placeSearch .poibox.highlight {
+            background-color: #CAE1FF;
+        }
+
+        .amap_lib_placeSearch .poi-more {
+            display: none!important;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div class="banner">
+    <span>企业注册信息</span>
+</div>
+<div class="content">
+    <form id="registerForm" method="post">
+        <ul>
+            <li>
+                <span>企业全称</span>
+                <input type="text" name="companyFullName" />
+            </li>
+            <li>
+                <span>企业简称</span>
+                <input type="text" name="companyName" />
+            </li>
+            <li>
+                <span>所属行业</span>
+                <dl class="fuXuan">
+                </dl>
+
+                <input type="hidden" name="industryIds" />
+                <div style="clear:both"></div>
+                <div style="margin-left:150px;font-size: 18px;">(请认真选择所属行业，切忌选择自己不拥有的服务行业，这样容易影响你企业在用户中的形象，不便于企业经营；一经发现行业选择夸大，将被封号)</div>
+            </li>
+            <li>
+                <span>企业简介</span>
+                <textarea name="companyDesc" rows="" cols=""></textarea>
+            </li>
+            <li style="height:300px;">
+                <span>地图标点</span>
+                <div id="pickerBox" style="position: absolute; z-index: 9999999; top: 425px; left: 166px; width: 300px;">
+                    <input id="pickerInput" style="width: 200px; padding: 5px 5px;" placeholder="输入关键字选取地点" />
+                    <div id="poiInfo" style="background: #fff;"></div>
+                </div>
+
+                <div id="companyPosMap" class="map" tabindex="0" style="width: 80%; height: 100%; top: 40px; margin-left: 15px; font-size: 13px;"></div>
+
+                <input type="hidden" name="posX" />
+                <input type="hidden" name="posY" />
+            </li>
+            <li style="margin-top:60px;">
+                <span>GPS坐标</span>
+                <input type="text" name="gps" />
+            </li>
+            <li>
+                <span>企业地址</span>
+                <input type="text" name="contactAddress" />
+            </li>
+            <li>
+                <span>主营项目</span>
+                <div class="zdy">
+                    <button type="button" onclick="OpenAlert()"><img src="cdn/img/jiaHao.png"/></button>
+
+                </div>
+                <div style="width: 100%;height: 1px;clear: both;"></div>
+
+                <input type="hidden" name="majorProject" />
+            </li>
+            <li>
+                <span>企业证照附件（营业执照、经营许可证等）</span>
+                <div class="imageList">
+                    <dl id="imageListOne">
+                        <dd>
+                            <button type="button" class="btnOne" onclick="document.getElementById('fileOne').click()">
+                                <img src="cdn/img/jiaHao.png"/>
+                            </button>
+                        </dd>
+                    </dl>
+                    <input type="file" id="fileOne" name="file" style="display: none;" />
+                </div>
+                <div style="width: 100%;height: 1px;clear: both;"></div>
+
+                <input type="hidden" name="businessLicenseUrl" />
+            </li>
+            <li>
+                <span>背景图片</span>
+                <div class="imageList">
+                    <dl id="imageListBackgroudImg">
+                        <dd>
+                            <button type="button" class="btnTwe1" onclick="document.getElementById('backgroudImgFile').click()">
+                                <img id="backgroudImg" src="cdn/img/jiaHao.png"/>
+                            </button>
+                        </dd>
+                    </dl>
+                </div>
+
+                <div class="hiddenClass">
+                    <input type="file" id="backgroudImgFile" name="file" style="display: none;" />
+                </div>
+                <div style="width: 100%;height: 1px;clear: both;"></div>
+
+                <input type="hidden" name="backgroudImg" />
+            </li>
+            <li>
+                <span>企业负责人</span>
+                <input type="text" name="legalName" />
+            </li>
+            <li>
+                <span>企业负责人身份证号</span>
+                <input type="text" name="legalIdcard" />
+            </li>
+            <li>
+                <span>身份证正反面</span>
+
+                <div class="imageList">
+                    <dl id="imageListTwe">
+                        <dd>
+                            <button type="button" class="btnTwe" onclick="document.getElementById('ShenFenOne').click()">
+                                <img id="shenFenImageOne" src="cdn/img/jiaHao.png"/>
+                            </button>
+                            <p>正面</p>
+                        </dd>
+                        <dd>
+                            <button type="button" class="btnTwe" onclick="document.getElementById('ShenFenTwe').click()">
+                                <img id="shenFenImageTwe" src="cdn/img/jiaHao.png"/>
+                            </button>
+                            <p>反面</p>
+                        </dd>
+                    </dl>
+                </div>
+
+                <div class="hiddenClass">
+                    <input type="file" id="ShenFenOne" name="file" style="display: none;" />
+                    <input type="file" id="ShenFenTwe" name="file" style="display: none;" />
+                </div>
+                <div style="width: 100%;height: 1px;clear: both;"></div>
+
+                <input type="hidden" name="idcardPositivePhoto" />
+                <input type="hidden" name="idcardNegativePhoto" />
+            </li>
+            <li>
+                <span>企业联系人</span>
+                <input type="text" name="contactName" />
+            </li>
+            <li>
+                <span>电 话</span>
+                <input type="text" name="contactMobile" />
+            </li>
+            <li>
+                <span>邮 箱</span>
+                <input type="text" name="companyEmail" />
+            </li>
+            <li>
+                <span>企业登录账号</span>
+                <input type="text" name="adminUserName" />
+            </li>
+            <li>
+                <span>登录账号密码</span>
+                <input type="password" name="adminPassword" />
+            </li>
+            <li class="btn">
+                <input type="button" onclick="register()" value="注册" id="submit-btn"/>
+            </li>
+        </ul>
+    </form>
+</div>
+
+<div class="inputAlert">
+    <p>请输入主营项目</p>
+    <div class="AlertContent">
+        <input type="text" class="zdyString" />
+    </div>
+    <p class="btnP">
+        <button type="button" onclick="addSpan()">添加</button>
+        <button type="button" onclick="ClertAlert()">取消</button>
+    </p>
+</div>
+
+</body>
+<script src="cdn/vendors/jquery-easyui-1.7.0/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="cdn/vendors/jquery-ui/jquery-ui.min.js"></script>
+<script src="cdn/vendors/jquery.validate.min.js"></script>
+<script src="cdn/vendors/jquery.form.min.js"></script>
+<script src="cdn/vendors/localization/messages_zh.js"></script>
+
+<script src="cdn/vendors/bootstrap/js/bootstrap.js"></script>
+<script src="cdn/vendors/bootbox.js"></script>
+<script src="cdn/vendors/jquery.tmpl.min.js"></script>
+<script src="cdn/vendors/ajaxfileupload.js"></script>
+<script src="cdn/vendors/jquery.cookie/jquery.cookie.js"></script>
+<script src="cdn/vendors/bootstrap-fileinput/bootstrap-fileinput.js"></script>
+<script src="cdn/vendors/jquery-file-upload/js/jquery.fileupload.js"></script>
+<script src="cdn/vendors/jquery-file-upload/js/jquery.fileupload-jquery-ui.js"></script>
+<script src="cdn/vendors/zTree/js/jquery.ztree.core-3.5.min.js"></script>
+<script src="cdn/vendors/zTree/js/jquery.ztree.excheck-3.5.min.js"></script>
+<script src="cdn/vendors/zTree/js/jquery.ztree.exedit-3.5.min.js"></script>
+
+<!--<script src="cdn/vendors/easyui/jquery.easyui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="cdn/vendors/easyui/locale/easyui-lang-zh_CN.js" type="text/javascript" charset="utf-8"></script>-->
+
+<script src="cdn/vendors/jquery-easyui-1.7.0/jquery.easyui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="cdn/vendors/jquery-easyui-1.7.0/locale/easyui-lang-zh_CN.js" type="text/javascript" charset="utf-8"></script>
+
+<script src="cdn/vendors/jquery-easyui-texteditor/jquery.texteditor.js"></script>
+<script type="text/javascript" src='http://webapi.amap.com/maps?v=1.4.15&key=8cd0ea9ca69f8e9e6a61d84c5ca3436f&plugin=AMap.PlaceSearch'></script>
+<script type="text/javascript" src='http://webapi.amap.com/maps?v=1.4.15&key=f91e3b7c163fa4411d39c0fd497cbde9&plugin=AMap.Geocoder'></script>
+<script src="http://webapi.amap.com/ui/1.0/main.js?v=1.0.11"></script>
+
+<script src="cdn/super/super.js"></script>
+<script src="cdn/super/superDemo.js" type="text/javascript" charset="utf-8"></script>
+
+<script src="js/app.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/common.js" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/javascript">
+    Array.prototype.indexOf = function(val) {
+        for (var i = 0; i < this.length; i++) {
+            if (this[i] == val) return i;
+        }
+        return -1;
+    };
+    Array.prototype.remove = function(val) {
+        var index = this.indexOf(val);
+        if (index > -1) {
+            this.splice(index, 1);
+        }
+    };
+    var access_token = "24.5cd745a9ab22a30a13d0fab2111b6df0.2592000.1581474154.282335-17751777";
+    var arrOne = []; /* 营业执照附件*/
+    var arrTwe = []; /* 身份证正反面*/
+    var arrOneUrlArr = []; /*营业执照附件链接*/
+    var arrTweUrlArr = []; /*身份证正反面链接*/
+    var ShenFenOne = ''; /*身份证正面*/
+    var ShenFenTwe = ''; /*身份证反面*/
+    var ShenFenTypeOne = 0;
+    var ShenFenTypeTwe = 0;
+
+    var frontImageUrl = '';//身份证正面地址
+    var backImageUrl = '';//身份证反面地址
+    var backgroudImg = '';//企业背景图片
+
+    /**
+     * 更新事件
+     */
+    function uploadListener() {
+        $('#fileOne').change(function(){
+            uploadImage("fileOne", function(data){
+                arrOneUrlArr.push(data.attachmentUrl);
+
+                $('#imageListOne').prepend('<dd><img src = "'+data.attachmentUrl+'"/><b imgname="'+data.attachmentUrl+'" imgurl="'+ data.attachmentUrl +'" onclick="deleteImage(this,1)">x</b></dd>');
+                $("#fileOne").replaceWith('<input type="file" id="fileOne" name="file" style="display: none;" />');
+
+                uploadListener();
+            });
+        });
+    }
+
+    /**
+     * 企业背景图片上传
+     */
+    function uploadBackgroudImgFileListener() {
+        $('#backgroudImgFile').change(function(){
+            uploadImage("backgroudImgFile", function(data){
+
+                $("#backgroudImg").attr('src',data.attachmentUrl);
+                $("#backgroudImg").attr('class','image');
+                $("#backgroudImgFile").replaceWith('<input type="file" id="backgroudImgFile" name="file" style="display: none;" />');
+
+                backgroudImg = data.attachmentUrl;
+                uploadBackgroudImgFileListener();
+            });
+        });
+    }
+
+    /** 身份证背面上传事件 */
+    function uploadShenFenOneListener() {
+        $('#ShenFenOne').change(function(){
+
+            //身份证图片验证
+            ShenFenOne = this.files[0];
+            var reader = new FileReader();
+            reader.readAsDataURL(this.files[0]);
+            reader.onload = function (e,event) {
+                var base64Image = e.target.result;
+                $("#shenFenImageOne").attr('src',base64Image);
+                $("#shenFenImageOne").attr('class','image');
+                base64Image = base64Image.split(",")[1];
+                parse(base64Image,'front');
+            };
+
+            /** 身份证正反面附件上传 */
+            uploadImage("ShenFenOne", function(data){
+                frontImageUrl = data.attachmentUrl;
+
+                $("#shenFenImageOne").attr('src', data.attachmentUrl);
+                $("#shenFenImageOne").attr('class', 'image');
+
+                $("#ShenFenOne").replaceWith('<input type="file" id="ShenFenOne" name="file" style="display: none;" />');
+
+                uploadShenFenOneListener();
+            });
+        });
+    }
+
+    /** 身份证背面上传事件 */
+    function uploadShenFenTweListener() {
+        $('#ShenFenTwe').change(function(){
+            //身份证反面图片验证
+            ShenFenTwe = this.files[0];
+            var reader = new FileReader();
+            reader.readAsDataURL(this.files[0]);
+            reader.onload = function (e) {
+                var base64Image = e.target.result;
+                $("#shenFenImageTwe").attr('src',base64Image);
+                $("#shenFenImageTwe").attr('class','image');
+                base64Image = base64Image.split(",")[1];
+                parse(base64Image,'back');
+            };
+
+
+            /** 身份证正反面附件上传 */
+            uploadImage("ShenFenTwe", function(data){
+                backImageUrl = data.attachmentUrl;
+
+                $("#shenFenImageTwe").attr('src', data.attachmentUrl);
+                $("#shenFenImageTwe").attr('class', 'image');
+
+                //$('#imageListTwe').prepend('<dd><img src = "'+data.attachmentUrl+'"/><b imgname = "'+data.attachmentUrl+'" imgurl="'+ data.attachmentUrl +'" onclick="deleteImage(this,2)">x</b>>x</b></dd>');
+                $("#ShenFenTwe").replaceWith('<input type="file" id="ShenFenTwe" name="file" style="display: none;" />');
+
+                uploadShenFenTweListener();
+            });
+        });
+    }
+
+    /* 百度识别 */
+    function parse(base64Image,b) {
+        var _b = b;
+        var url = "https://aip.baidubce.com/rest/2.0/ocr/v1/idcard?access_token=" + access_token;
+        $.ajax({
+            url: url,
+            type: "post",
+            dataType: 'json',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            data: {
+                image: base64Image,
+                id_card_side: b
+            },
+            success: function (data) {
+                console.log(data);
+                if(data.image_status == 'non_idcard'){
+                    if (_b == 'front') {
+                        ShenFenTypeOne = 0;
+                        $(".btnTwe").eq(0).css("border-color",'#f00');
+                    }else if(_b == 'back'){
+                        ShenFenTypeTwe = 0;
+                        $(".btnTwe").eq(1).css("border-color",'#f00');
+                    }
+
+                    App.showMsg("非身份证图片, 请上传身份证图片。");
+                } else if(data.image_status == 'reversed_side') {
+                    if (_b == 'front') {
+                        ShenFenTypeOne = 0;
+                        $(".btnTwe").eq(0).css("border-color",'#f00');
+
+                        App.showMsg("非身份证正面图片, 请上传身份证正面图片。");
+                    }else if(_b == 'back'){
+                        ShenFenTypeTwe = 0;
+                        $(".btnTwe").eq(1).css("border-color",'#f00');
+
+                        App.showMsg("非身份证反面图片, 请上传身份证反面图片。");
+                    }
+                } else {
+                    if (_b == 'front') {
+                        ShenFenTypeOne = 1;
+                        $(".btnTwe").eq(0).css("border-color",'#00ec00');
+                    }else if(_b == 'back'){
+                        ShenFenTypeTwe = 1;
+                        $(".btnTwe").eq(1).css("border-color",'#00ec00');
+                    }
+                }
+            },
+            error: function (xhr, type, errorThrown) {
+                alert('识别失败');
+            }
+        });
+    }
+
+    /* 图片删除*/
+    function deleteImage(a,b){
+        var imgname = $(a).attr('imgname');
+        var imgurl = $(a).attr('imgurl');
+        var deleteArr = '';
+        if (b == 1) {
+            for (var i = 0;i<arrOne.length;i++) {
+                if (arrOne[i].name == imgname) {
+                    deleteArr = arrOne[i];
+                }
+            }
+            arrOne.remove(deleteArr);
+
+            for (var i = 0;i<arrOneUrlArr.length;i++) {
+                if (arrOneUrlArr[i] == imgname) {
+                    deleteArr = arrOneUrlArr[i];
+                }
+            }
+            arrOneUrlArr.remove(deleteArr);
+        } else{
+            for (var i = 0;i<arrTwe.length;i++) {
+                if (arrTwe[i].name == imgname) {
+                    deleteArr = arrTwe[i];
+                }
+            }
+            arrTwe.remove(deleteArr);
+
+            for (var i = 0;i<arrTweUrlArr.length;i++) {
+                if (arrTweUrlArr[i] == imgname) {
+                    deleteArr = arrTweUrlArr[i];
+                }
+            }
+            arrTweUrlArr.remove(deleteArr);
+        }
+
+        $(a).parent().remove();
+    }
+
+    /* 获取行业*/
+    function getInd(){
+        var ddList = $('.fuXuan .xz');
+        var valList = [];
+        for(var i = 0;i<ddList.length; i++){
+            valList.push($(ddList[i]).attr('val'));
+        }
+        return valList;
+    }
+
+    function OpenAlert(){
+        $('.inputAlert').show();
+    }
+
+    function ClertAlert(){
+        $('.inputAlert').hide();
+    }
+
+    function addSpan(){
+        var cc = $('.zdyString').val();
+        var aa = '';
+        if (cc.length <8) {
+            aa = cc;
+        } else{
+            aa = cc.substring(0,8) + '...';
+        }
+        $('.zdy').prepend('<span title="'+cc+'">'+aa+'<b onclick="removeSpan(this)">x</b></span>');
+        $('.zdyString').val('');
+        $('.inputAlert').hide();
+    }
+
+    function removeSpan(a){
+        $(a).parent().remove();
+    }
+
+    function getzdy(){
+        var cc = $('.zdy span');
+        var textArr = [];
+        for (var i=0;i<cc.length;i++) {
+            textArr.push($(cc[i]).attr('title').substring(0,$(cc[i]).attr('title').length));
+        }
+        return textArr;
+    }
+
+    /**
+     * 上传图片
+     *
+     * @param fileInputId   文件ID
+     * @param callback      返回方法
+     */
+    function uploadImage(fileInputId, callback) {
+        $.ajaxFileUpload({
+            url: App.href + "/api/common/uploadImage",
+            type: "POST",
+            fileElementId: fileInputId,
+            dataType: "json",
+            success: function (json, status) {
+                if (json.code === 200) {
+                    callback(json.data);
+                } else {
+                    alert(json.message);
+                    return;
+                }
+            },
+            error: function (data, status, e) {
+                alert(e);
+            }
+        });
+    }
+
+    ;(function ($, window, document, undefined){
+        /*获取行业选项信息*/
+        App.getRequestData('/api/noneAuth/industryOptions', {}, function(result) {
+            for(var i = 0; i < result.length; i++) {
+                $(".fuXuan").append($('<dd val = "'+ result[i]['value'] +'">'+ result[i]['text'] +'</dd>'));
+            }
+
+            $('.fuXuan>dd').click(function(){
+                var thisClass = $(this).attr('class');
+                if (thisClass == 'xz') {
+                    $(this).removeClass("xz")
+                } else{
+                    $(this).attr("class","xz")
+                }
+            });
+
+            $("#pickerBox").css({'top': $("#companyPosMap").position().top - 40});
+
+            $("#pickerBox").css({'left': $("#companyPosMap").position().left + 15});
+        });
+
+        var markers = [];
+
+        //渲染基地地图
+        var map = new AMap.Map('companyPosMap', {
+            zoom: 10
+        });
+
+        window.map = map;
+        window.markers = markers;
+
+        var geocoder = new AMap.Geocoder({
+            city: "010", //城市设为北京，默认：“全国”
+            radius: 1000 //范围，默认：500
+        });
+
+        AMapUI.loadUI(['control/BasicControl'], function(BasicControl) {
+
+            //缩放控件，显示Zoom值
+            map.addControl(new BasicControl.Zoom({
+                position: 'lb',
+                showZoomNum: true
+            }));
+
+            //图层切换控件
+            map.addControl(new BasicControl.LayerSwitcher({
+                position: 'rt'
+            }));
+        });
+
+        AMapUI.loadUI(['misc/PoiPicker'], function(PoiPicker) {
+
+            var poiPicker = new PoiPicker({
+                //city:'北京',
+                input: 'pickerInput'
+            });
+
+            //初始化poiPicker
+            poiPickerReady(poiPicker);
+        });
+
+        map.on('click', function(e){
+            if(markers.length > 0) {
+                map.remove(markers);
+            }
+
+            var marker = new AMap.Marker({
+                map:map,
+                position:[e.lnglat.getLng(), e.lnglat.getLat()],
+                label: {
+                    offset: new AMap.Pixel(20, 20),//修改label相对于maker的位置
+                }
+            });
+
+            //定位设置坐标
+            $("#registerForm").find("input[name=posX]").val(e.lnglat.getLng());
+            $("#registerForm").find("input[name=posY]").val(e.lnglat.getLat());
+
+            geocoder.getAddress(e.lnglat.getLng() + "," + e.lnglat.getLat(), function(status, result) {
+                if (status === 'complete' && result.regeocode) {
+                    var address = result.regeocode.formattedAddress;
+                    $("input[name=contactAddress]").val(address);
+
+                    $("input[name=gps]").val(e.lnglat.getLng() + "," + e.lnglat.getLat());
+                }else{
+                    console.log('根据经纬度查询地址失败');
+                }
+            });
+
+            markers.push(marker);
+        });
+
+        function poiPickerReady(poiPicker) {
+
+            window.poiPicker = poiPicker;
+
+
+            //选取了某个POI
+            poiPicker.on('poiPicked', function(poiResult) {
+                poi = poiResult.item;
+
+                var marker = new AMap.Marker();
+                marker.setMap(map);
+
+                marker.setPosition(poi.location);
+                map.setCenter(marker.getPosition());
+
+                $("#registerForm").find("input[name=posX]").val(poi.location.lng);
+                $("#registerForm").find("input[name=posY]").val(poi.location.lat);
+
+                $("input[name=gps]").val(poi.location.lng + "," + poi.location.lat);
+
+                geocoder.getAddress(poi.location.lng + "," + poi.location.lat, function(status, result) {
+                    if (status === 'complete' && result.regeocode) {
+                        var address = result.regeocode.formattedAddress;
+                        $("input[name=contactAddress]").val(address);
+                    }else{
+                        console.log('根据经纬度查询地址失败');
+                    }
+                });
+
+                if(markers.length > 0) {
+                    map.remove(markers);
+                }
+
+                markers.push(marker);
+            });
+        }
+
+        /*验证表单信息*/
+        $("#registerForm").validate({
+            errorElement: 'p',
+            errorClass: 'falseP',
+            submitHandler: function(form) {
+
+                $(form).ajaxSubmit({
+                    dataType: "json",
+                    url: App.href + '/api/token/register',
+                    method: 'POST',
+                    success: function(data) {
+                        if (data.code == 200) {
+                            alert('注册成功，平台审核通过后短信通知您登录方式...');
+
+                            $("#submit-btn").attr('disabled', true);
+                            $("#submit-btn").css('background-color', '#778899');
+                        } else {
+                            App.showMsg(data.message);
+                        }
+                    }
+                });
+            },
+            invalidHandler: function(form, validator) {
+                alert("请填写正确信息");
+            },
+            rules:{
+                companyFullName:{
+                    required:true
+                },
+                companyName:{
+                    required:true
+                },
+                companyDesc:{
+                    required:true
+                },
+                gps:{
+                    required:true,
+                    isGps:true
+                },
+                contactAddress:{
+                    required:true
+                },
+                legalName:{
+                    required:true
+                },
+                legalIdcard:{
+                    required:true,
+                    idcard:true
+                },
+                contactName:{
+                    required:true
+                },
+                contactMobile: {
+                    required: true,
+                    isMobile: true
+                },
+                companyEmail :{
+                    required: true,
+                    email:true
+                },
+                adminUserName :{
+                    required: true
+                },
+                adminPassword :{
+                    required: true
+                }
+            },
+            messages:{
+                companyFullName:{
+                    required:'请输入一个企业全称'
+                },
+                companyName:{
+                    required:'请输入一个企业简称'
+                },
+                companyDesc:{
+                    required:'请输入一个企业简介'
+                },
+                gps:{
+                    required:'请输入一个GPS地址'
+                },
+                contactAddress:{
+                    required:'请输入一个企业地址'
+                },
+                legalName:{
+                    required:'请输入企业负责人姓名'
+                },
+                legalIdcard:{
+                    required:'请输入企业负责人身份证号'
+                },
+                contactName:{
+                    required:'请输入企业联系人'
+                },
+                contactMobile: {
+                    required: '请输入您的常用手机号码'
+                },
+                companyEmail :{
+                    required: '请输入您的邮箱',
+                    email:'邮箱格式不正确'
+                },
+                adminUserName :{
+                    required: '请输入您的企业登录账号'
+                },
+                adminPassword :{
+                    required: '请输入您的登录账号密码'
+                }
+            },
+            onsubmit:true
+        });
+
+        uploadListener();
+        uploadBackgroudImgFileListener();
+        uploadShenFenOneListener();
+        uploadShenFenTweListener();
+    })(jQuery, window, document);
+
+    /* 注册*/
+    function register() {
+        var industryList = getInd();
+        if(industryList.length == 0) {
+            alert("请选择所属行业...");
+
+            return false;
+        } else {
+            $("input[name=industryIds]").val(industryList.join(','));
+        }
+
+        var majorProjectList = getzdy();
+        if(majorProjectList.length == 0) {
+            alert("请选择主营项目...");
+
+            return false;
+        } else {
+            $("input[name=majorProject]").val(majorProjectList.join(','));
+        }
+
+        if(arrOneUrlArr.length == 0) {
+            alert("请上传企业证照附件...");
+
+            return false;
+        } else {
+            $("input[name=businessLicenseUrl]").val(arrOneUrlArr.join(','));
+        }
+
+        if(backgroudImg == '') {
+            alert("请上传背景图...");
+            return false;
+        } else {
+            $("input[name=backgroudImg]").val(backgroudImg);
+        }
+
+        if(ShenFenTypeOne == 0 || ShenFenTypeTwe == 0) {
+            alert("请上传身份证正反面, 并确认上传图片正确...");
+
+            return false;
+        } else {
+            $("input[name=idcardPositivePhoto]").val(frontImageUrl);
+            $("input[name=idcardNegativePhoto]").val(backImageUrl);
+        }
+
+        var gps = $("input[name=gps]").val();
+        var gpsArr = gps.split(",");
+        $("input[name=posX]").val(gpsArr[0]);
+        $("input[name=posY]").val(gpsArr[1]);
+
+        $("#registerForm").submit();
+    }
+</script>
+</html>

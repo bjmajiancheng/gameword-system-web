@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>用户管理</title>
+</head>
+
+<body>
+<div class="super-theme-example">
+    <div class="search-form-item col-md-4">
+        <label for="userName" class="label-top">账号：</label>
+        <input id="userName" class="easyui-validatebox easyui-textbox" prompt="请输入账号">
+    </div>
+    <div class="search-form-item col-md-4">
+        <label for="contactPhone" class="label-top">手机号：</label>
+        <input id="contactPhone" class="easyui-validatebox easyui-textbox" prompt="请输入手机号">
+    </div>
+
+    <div class="search-form-item col-md-3">
+        <a href="javascript:void(0)" onclick="refreshCompanyUser()" class="easyui-linkbutton primary">查询</a>
+        <a href="javascript:void(0)" onclick="addCompanyUser()" class="easyui-linkbutton primary">新增账号</a>
+    </div>
+</div>
+
+<div class="clear"></div>
+<div class="super-theme-example">
+    <div style="height: 400px;">
+        <table id="companyUserTab"></table>
+    </div>
+
+
+    <div id="companyUserWin" class="align_center" style="display: none;padding-top:30px;" title="新增用户">
+        <form id="companyUserForm" method="post">
+            <input name="id" type="hidden" />
+            <div class="form-item col-md-10">
+                <label class="label-top">账户：</label>
+                <input id="user_userName" name="userName" class="easyui-validatebox easyui-textbox" prompt="请输入账户" data-options="required:true, missingMessage:'请输入账号'" disabled="disabled">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top">密码：</label>
+                <input id="userInfo_password" name="password" class="easyui-validatebox easyui-passwordbox" prompt="请输入密码" data-options="required:true, missingMessage:'请输入密码'">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top">显示名称：</label>
+                <input id="user_displayName" name="displayName" class="easyui-validatebox easyui-textbox" prompt="请输入显示名称" data-options="required:true, missingMessage:'请输入显示名称'">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top">角色：</label>
+                <input id="userRoleId" name="roleIds" class="easyui-combobox">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top">所属部门：</label>
+                <input id="userDeptId" name="deptId" class="easyui-combobox">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top">联系电话：</label>
+                <input id="user_contactPhone" name="contactPhone" class="easyui-validatebox easyui-textbox" prompt="请输入联系电话" data-options="required:true, missingMessage:'请输入联系电话', validType:'telephone'">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top">账号状态：</label>
+                <select id="user_enabled" class="easyui-combobox" data-options="editable:false,panelHeight:null" name="enabled">
+                    <option value="1" selected>启用</option>
+                    <option value="0">禁用</option>
+                </select>
+            </div>
+            <div class="form-item col-md-10">
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="userInfoSave()">保存</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="userInfoCancel()">取消</a>
+            </div>
+        </form>
+    </div>
+
+    <div id="companyUserDetailWin" style="display: none;padding-top:30px;" title="用户详情">
+        <div class="form-item col-md-10">
+            <label class="label-top">账户：</label>
+            <label class="label-top userNameLabel"></label>
+        </div>
+        <div class="form-item col-md-10">
+            <label class="label-top">显示名称：</label>
+            <label class="label-top displayNameLabel"></label>
+        </div>
+        <div class="form-item col-md-10">
+            <label class="label-top">角色：</label>
+            <label class="label-top userRoleLabel"></label>
+        </div>
+        <div class="form-item col-md-10">
+            <label class="label-top">所属部门：</label>
+            <label class="label-top userDeptLabel"></label>
+        </div>
+        <div class="form-item col-md-10">
+            <label class="label-top">联系电话：</label>
+            <label class="label-top user_contactPhoneLabele"></label>
+        </div>
+        <div class="form-item col-md-10">
+            <label class="label-top">账号状态：</label>
+            <label class="label-top userEnableLabel"></label>
+        </div>
+
+        <div class="form-item col-md-10">
+            <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="closeUserDetail();">关闭</a>
+        </div>
+    </div>
+
+    <!--<div id="companyUserPasswordWin" class="align_center" style="display: none;padding-top:30px;" title="修改用户密码">
+        <form id="companyUserPasswordForm" method="post">
+            <input name="id" type="hidden" />
+            <div class="form-item col-md-10">
+                <label class="label-top">原密码：</label>
+                <input id="user_password" name="password" class="easyui-validatebox easyui-passwordbox" prompt="请输入原密码" data-options="required:true, missingMessage:'请输入原密码'">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top">新密码：</label>
+                <input id="user_newPassword" name="newPassword" class="easyui-validatebox easyui-passwordbox" prompt="请输入新密码" data-options="required:true, missingMessage:'请输入新密码'">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top">确认密码：</label>
+                <input id="user_newPasswordConfirm" name="newPasswordConfirm" class="easyui-validatebox easyui-passwordbox" prompt="请输入确认密码" data-options="required:true, missingMessage:'请输入确认密码'">
+            </div>
+            <div class="form-item col-md-10">
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="userPasswordInfoSave()">保存</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="userPasswordInfoCancel()">取消</a>
+            </div>
+        </form>
+    </div>-->
+</div>
+
+<script type="text/javascript">
+    ;(function ($, window, document, undefined){
+        $('#companyUserTab').datagrid({
+            url: App.href + '/api/common/companyUser/list',
+            fit: true,
+            pagination: true,
+            fitColumns: true,
+            method: 'GET',
+            pageSize: 10,
+            pageList: [10, 25, 50, 100, 200],
+            height: 400,
+            queryParams: {'displayName': $("#displayName").val(), 'contactPhone': $('#contactPhone').val()},
+            toolbar: [],
+            loadFilter: function(data) {
+                if (data.code === 401) {
+                    App.showMsg('token失效,请登录!');
+                    window.location.href = App.href + '/login.html';
+                    return {"total":0, "rows": "[]"};
+                } else {
+                    return data;
+                }
+            },
+            onBeforeLoad: function (param) {
+                var userName = $("#userName").val();
+                var contactPhone = $('#contactPhone').val();
+
+                param.userName = userName;
+                param.contactPhone = contactPhone;
+            },
+            columns: [
+                [{
+                    field: 'id',
+                    title: '编号',
+                    sortable: true,
+                    width: 50
+                }, {
+                    field: 'userName',
+                    title: '账号',
+                    width: 50,
+                    formatter: function(value, row, index) {
+                        if(row.isAdmin == 1) {
+                            return '<font color="red">'+row.userName + '*' + '</font>';
+                        } else {
+                            return row.userName;
+                        }
+                    }
+                }, {
+                    field: 'contactPhone',
+                    title: '手机号',
+                    width: 50
+                }, {
+                    field: 'roleName',
+                    title: '角色',
+                    width: 50
+                }, {
+                    field: 'customer_col1',
+                    title: '用户状态',
+                    width: 50,
+                    formatter: function(value, row, index) {
+                        if(row.enabled == 1) {
+                            return "正常";
+                        } else {
+                            return "禁用";
+                        }
+                    }
+                }, {
+                    field: 'customer_col2',
+                    title: '操作',
+                    width: 50,
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var btns = new Array();
+                        if(row.enabled == 0) {
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateUserEnabled(' + row.id + ', 1);">启用</a>&nbsp;');
+                        } else if(row.enabled == 1) {
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateUserEnabled('+ row.id +', 0);">禁用</a>&nbsp;');
+                        }
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="userDetail('+ row.id +')">查看</a>&nbsp;');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="editUser('+ row.id +')">修改</a>&nbsp;');
+                        /*btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="editUserPassword('+ row.id +')">修改密码</a>');*/
+                        return btns.join('');
+                    }
+
+                }]
+            ]
+        });
+
+        //初始化用户角色和部门信息
+        initUserBaseInfo();
+
+        /*//密码修改表单提交
+        $('#companyUserPasswordForm').form({
+            url: App.href + '/api/common/companyUser/updateUserPassword',
+            method: 'POST',
+            onSubmit:function(){
+                return $(this).form('validate');
+            },
+            success:function(data){
+                var obj = JSON.parse(data);
+                if (obj.code == 200) {
+                    App.showMsg('保存成功');
+                    $('#companyUserPasswordWin').window('close');
+                } else {
+                    App.showMsg(obj.message);
+                }
+                refreshCompanyUser();
+            }
+        });*/
+
+    })(jQuery, window, document);
+
+
+
+    function refreshCompanyUser() {
+        $('#companyUserTab').datagrid('reload');
+    }
+
+    function updateUserEnabled(userId, enabled) {
+        var info = "启用";
+        if(enabled == 0) {
+            info = "禁用";
+        }
+        $.messager.confirm('确认', '您确认想要'+ info +'用户吗？', function(r) {
+            if(r) {
+                App.getRequestData('/api/common/companyUser/updateUserEnabled', {'userId': userId, 'enabled': enabled}, function(){
+                    App.showMsg(info + '操作成功');
+                    refreshCompanyUser();
+                });
+            }
+        });
+    }
+
+    /**
+     * 初始化用户基础信息
+     *
+     */
+    function initUserBaseInfo() {
+        // 获取公司角色信息
+        App.getRequestData("/api/common/company/getCurrUserCompanyRoles", {}, function(data) {
+            data.rows.unshift({id:'0', roleName:'请选择'});
+            $("#userRoleId").combobox({
+                valueField: 'id',
+                textField: 'roleName',
+                editable: false,
+                required: true,
+                multiple: true,
+                mode: 'local',
+                value: '0',
+                data: data.rows
+            });
+        });
+
+        // 获取公司部门信息
+        App.getRequestData("/api/common/company/getCurrUserCompanyDepts", {}, function(data) {
+            data.rows.unshift({id:'0', deptName:'请选择'});
+            $("#userDeptId").combobox({
+                valueField: 'id',
+                textField: 'deptName',
+                editable: false,
+                required: true,
+                mode: 'local',
+                value: '0',
+                data: data.rows
+            });
+        });
+    }
+
+    /**
+     * 保存用户信息
+     */
+    function userInfoSave() {
+        var deptId = $('#companyUserWin').find('input[name=deptId]').val();
+        var roleId = $('#companyUserWin').find('input[name=roleId]').val();
+
+        if(roleId == 0) {
+            App.showMsg('请选择角色');
+            return false;
+        }
+
+        if(deptId == 0) {
+            App.showMsg('请选择部门');
+            return false;
+        }
+
+        $('#companyUserForm').submit();
+    }
+
+    /**
+     * 取消用户信息
+     */
+    function userInfoCancel() {
+        $('#companyUserWin').window('close');
+    }
+
+    $('#companyUserForm').form({
+        url: App.href + '/api/common/companyUser/saveUser',
+        method: 'POST',
+        onSubmit:function(){
+            return $(this).form('validate');
+        },
+        success:function(data){
+            var obj = JSON.parse(data);
+            if (obj.code == 200) {
+                App.showMsg('保存成功');
+                $('#companyUserWin').window('close');
+            } else {
+                App.showMsg(obj.message);
+            }
+            refreshCompanyUser();
+        }
+    });
+
+    /**
+     * 添加公司用户
+     *
+     */
+    function addCompanyUser() {
+        $('#companyUserWin').window({
+            width:600,
+            height:400,
+            modal:true
+        });
+        $('#companyUserWin').window({title: '添加用户'});
+
+        $("#user_userName").textbox({disabled:false});
+
+        $("#companyUserForm").find("input[name=id]").val('');
+        $("#user_userName").textbox('setValue', '');
+        $("#user_displayName").textbox('setValue', '');
+        $("#userRoleId").combobox('setValue', '0');
+        $("#userDeptId").combobox('setValue', '0');
+        $("#user_contactPhone").textbox('setValue', '');
+        $("#user_enabled").combobox('setValue', '1');
+        $("#userInfo_password").passwordbox('setValue', '');
+
+        $('#companyUserForm').form({'url': App.href + '/api/common/companyUser/saveUser'});
+    }
+
+    /**
+     * 用户详情
+     */
+    function userDetail(userId) {
+        $('#companyUserDetailWin').window({
+            width:600,
+            height:400,
+            modal:true
+        });
+        $('#companyUserDetailWin').window({title: '用户详情'});
+
+        App.getRequestData('/api/common/companyUser/getUser', {'userId': userId}, function(data) {
+            $(".userNameLabel").text(data.userName);
+            $(".displayNameLabel").text(data.displayName);
+            $(".userRoleLabel").text(data.roleName);
+            $(".userDeptLabel").text(data.deptName);
+            $(".user_contactPhoneLabele").text(data.contactPhone);
+
+            var enabledStr = "禁用";
+            if(data.enabled == 1) {
+                enabledStr = "正常";
+            }
+
+            $(".userEnableLabel").text(enabledStr);
+        });
+    }
+
+    /**
+     * 关闭用户详情窗口
+     */
+    function closeUserDetail() {
+        $('#companyUserDetailWin').window('close');
+    }
+
+    /**
+     * 修改用户
+     */
+    function editUser(userId) {
+        $('#companyUserWin').window({
+            width:600,
+            height:400,
+            modal:true
+        });
+        $('#companyUserWin').window({title: '用户修改'});
+        $("#user_userName").textbox({disabled:true});
+
+        App.getRequestData('/api/common/companyUser/getUser', {'userId': userId}, function(data) {
+            $("#companyUserForm").find("input[name=id]").val(data.id);
+            $('#companyUserForm').form({'url': App.href + '/api/common/companyUser/updateUser'});
+
+            $("#user_userName").textbox('setValue', data.userName);
+            $("#userInfo_password").passwordbox('setValue', data.password);
+            $("#user_displayName").textbox('setValue', data.displayName);
+            $("#userRoleId").combobox('setValue', data.roleIds);
+            $("#userDeptId").combobox('setValue', data.deptId);
+            $("#user_contactPhone").textbox('setValue', data.contactPhone);
+            $("#user_enabled").combobox('setValue', data.enabled);
+        });
+    }
+
+    /**
+     * 修改用户密码
+     * @param userId
+     */
+    /*function editUserPassword(userId) {
+        $('#companyUserPasswordWin').window({
+            width:600,
+            height:400,
+            modal:true
+        });
+
+        $("#companyUserPasswordForm").find("input[name=id]").val(userId);
+        $("#user_password").passwordbox('setValue', "");
+        $("#user_newPassword").passwordbox('setValue', "");
+        $("#user_newPasswordConfirm").passwordbox('setValue', "");
+    }
+
+    /!**
+     * 用户密码保存
+     *!/
+    function userPasswordInfoSave() {
+        var newPassword = $("#user_newPassword").textbox('getValue');
+        var newPasswordConfirm = $("#user_newPasswordConfirm").textbox('getValue');
+
+        if(newPassword != newPasswordConfirm) {
+            App.showMsg('新密码和确认密码不一致，请修改确认密码.');
+            return false;
+        }
+
+        $("#companyUserPasswordForm").submit();
+    }
+
+    /!**
+     * 用户密码修改取消
+     *!/
+    function userPasswordInfoCancel() {
+        $('#companyUserPasswordWin').window('close');
+    }*/
+</script>
+</body>
+
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <title>忘记密码</title>
+
+    <link href="cdn/vendors/jquery-ui/jquery-ui.min.css" rel="stylesheet" media="screen">
+    <link href="cdn/vendors/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="cdn/vendors/bootstrap-fileinput/bootstrap-fileinput.css" rel="stylesheet" media="screen">
+    <link href="cdn/vendors/jquery-file-upload/css/jquery.fileupload.css" rel="stylesheet" media="screen">
+    <link href="cdn/vendors/jquery-file-upload/css/jquery.fileupload-ui.css" rel="stylesheet" media="screen">
+    <link href="cdn/vendors/zTree/css/zTreeStyle/zTreeStyle.css" rel="stylesheet">
+    <link href="cdn/vendors/jquery-easyui-texteditor/texteditor.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="cdn/vendors/jquery-easyui-1.7.0/themes/gray/easyui.css">
+    <!--<link rel="stylesheet" href="cdn/vendors/easyui/themes/gray/easyui.css">-->
+    <link rel="stylesheet" href="cdn/super/css/font-awesome.min.css">
+    <link rel="stylesheet" href="cdn/super/superBlue.css" id="themeCss">
+    <link rel="stylesheet" href="css/common.css">
+
+</head>
+<body id="main" class="easyui-layout">
+<div data-options="region:'north',border:false" class="super-north">
+    <!--顶部-->
+    <div class="super-navigation">
+        <!--系统名称-->
+        <div class="super-navigation-title">企业运营后台</div>
+        <!--自定义导航-->
+        <div class="super-navigation-main">
+            <div class="super-setting-left">
+                <ul>
+                    <li><i class="fa fa-home" id="index_btn"></i>首页</li>
+                    <li><i class="fa fa-sign-in" id="toLogin_btn"></i>登录</li>
+                    <!--
+                    <li><i class="fa fa-envelope-o"></i>邮件</li>
+                    <li><i class="fa fa-bell-o"></i>通知</li>-->
+                </ul>
+            </div>
+            <div class="super-setting-right">
+                <ul>
+                    <li>
+                        <!--<div class="super-setting-icon">
+                            <i class="fa fa-gears"></i>
+                        </div>-->
+                        <!--<div id="mm" class="easyui-menu">
+                        </div>-->
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div data-options="region:'center'" style="padding-top: 2px;">
+    <!--主要内容-->
+    <h2 style="font-size: 25px; margin: 15px;" class="align_center">找回密码</h2>
+    <div class="super-theme-example">
+        <form id="forgetPassForm" method="post">
+            <div class="form-item col-md-4"></div>
+            <div class="form-item col-md-5">
+                <label class="label-top">注册手机号：</label>
+                <input id="forgetPass_contactPhone" name="contactPhone" class="easyui-validatebox easyui-textbox" prompt="请输入注册手机号" data-options="required:true, missingMessage:'请输入注册手机号', validType:'telephone'">
+            </div>
+            <div class="clear"></div>
+
+            <div class="form-item col-md-4"></div>
+            <div class="form-item col-md-5">
+                <label class="label-top">验证码：</label>
+                <input id="forgetPass_captchaCode" name="captchaCode" class="easyui-validatebox easyui-textbox" style="width:90px;" prompt="请输入验证码" data-options="required:true, missingMessage:'请输入验证码'">
+                &nbsp;&nbsp;
+                <a href="javascript:void(0)" onclick="sendCaptchaCode()" class="easyui-linkbutton primary">发送验证码</a>
+            </div>
+            <div class="clear"></div>
+
+            <div class="form-item col-md-4"></div>
+            <div class="form-item col-md-5">
+                <label class="label-top">新密码：</label>
+                <input id="forgetPass_password" name="password" class="easyui-validatebox easyui-passwordbox" prompt="请输入新密码" data-options="required:true, missingMessage:'请输入新密码'">
+            </div>
+            <div class="clear"></div>
+
+            <div class="form-item col-md-4"></div>
+            <div class="form-item col-md-5">
+                <label class="label-top">确认密码：</label>
+                <input id="forgetPass_confirmPassword" name="confirmPassword" class="easyui-validatebox easyui-passwordbox" prompt="请输入确认密码" data-options="required:true, missingMessage:'请输入确认密码'">
+            </div>
+            <div class="clear"></div>
+
+            <div class="clear"></div>
+
+            <div class="form-item col-md-10 align_center">
+                <a href="javascript:void(0)" onclick="resetPassword()" class="easyui-linkbutton primary">重置密码</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div data-options="region:'south'" class="super-south">
+    <!--页脚-->
+    <div class="super-footer-info">
+        <!--<span><i class="fa fa-info-circle"></i> 作者：tianyu</span>-->
+        <span><i class="fa fa-copyright"></i> CopyRight 2019 版权所有 <i class="fa fa-caret-right"></i></span>
+    </div>
+</div>
+
+<script src="cdn/vendors/jquery-easyui-1.7.0/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="cdn/vendors/jquery-ui/jquery-ui.min.js"></script>
+
+<script src="cdn/vendors/bootstrap/js/bootstrap.js"></script>
+<script src="cdn/vendors/bootbox.js"></script>
+<script src="cdn/vendors/jquery.tmpl.min.js"></script>
+<script src="cdn/vendors/ajaxfileupload.js"></script>
+<script src="cdn/vendors/jquery.cookie/jquery.cookie.js"></script>
+<script src="cdn/vendors/bootstrap-fileinput/bootstrap-fileinput.js"></script>
+<script src="cdn/vendors/jquery-file-upload/js/jquery.fileupload.js"></script>
+<script src="cdn/vendors/jquery-file-upload/js/jquery.fileupload-jquery-ui.js"></script>
+<script src="cdn/vendors/zTree/js/jquery.ztree.core-3.5.min.js"></script>
+<script src="cdn/vendors/zTree/js/jquery.ztree.excheck-3.5.min.js"></script>
+<script src="cdn/vendors/zTree/js/jquery.ztree.exedit-3.5.min.js"></script>
+
+<!--<script src="cdn/vendors/easyui/jquery.easyui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="cdn/vendors/easyui/locale/easyui-lang-zh_CN.js" type="text/javascript" charset="utf-8"></script>-->
+
+<script src="cdn/vendors/jquery-easyui-1.7.0/jquery.easyui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="cdn/vendors/jquery-easyui-1.7.0/locale/easyui-lang-zh_CN.js" type="text/javascript" charset="utf-8"></script>
+
+<script src="cdn/vendors/jquery-easyui-texteditor/jquery.texteditor.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=I9koTHOWtxzVXA60W8SyGDkObzLlrYFM"></script>
+
+<script src="cdn/super/super.js"></script>
+<script src="cdn/super/superDemo.js" type="text/javascript" charset="utf-8"></script>
+
+<script src="js/app.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/common.js" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/javascript">
+    ;(function ($, window, document, undefined){
+
+        $('#forgetPassForm').form({
+            url: App.href + '/api/noneAuth/resetPass',
+            method: 'POST',
+            onSubmit:function(){
+                return $(this).form('validate');
+            },
+            success:function(data){
+                var obj = JSON.parse(data);
+                if (obj.code == 200) {
+                    App.showMsg('密码重置成功，请您用修改后的密码进行登录...');
+                } else {
+                    App.showMsg(obj.message);
+                }
+            }
+        });
+
+    })(jQuery, window, document);
+
+    function resetPassword() {
+        var contactPhone = $("#forgetPass_contactPhone").textbox('getValue');
+        var captchaCode = $("#forgetPass_captchaCode").textbox('getValue');
+        var password = $("#forgetPass_password").textbox('getValue');
+        var confirmPassword = $("#forgetPass_confirmPassword").textbox('getValue');
+
+        if(password != confirmPassword) {
+            App.showMsg('新密码和确认密码不一致，请重新填写...');
+            return false;
+        }
+
+        $("#forgetPassForm").submit();
+    }
+
+    /**
+     * 发送验证码
+     */
+    function sendCaptchaCode() {
+        var contactPhone = $("#forgetPass_contactPhone").textbox('getValue');
+        var reg = /^1[3,4,5,6,7,8,9][0-9]{9}$/;
+        if(!reg.test(contactPhone)) {
+            App.showMsg('请填写正确的注册手机号');
+            return false;
+        }
+
+        App.getRequestData('/api/noneAuth/sendCaptchaCode', {'mobilePhone': contactPhone}, function(data) {
+            App.showMsg('验证码发送成功...');
+        });
+    }
+
+</script>
+</body>
+</html>
