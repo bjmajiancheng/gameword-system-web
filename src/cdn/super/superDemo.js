@@ -76,7 +76,7 @@ $(function() {
                         dataType: "json",
                         success: function (result) {
                             if (result.code === 200) {
-                                $.cookie('coolplay_company_token', null);
+                                $.cookie('gameword_system_token', null);
                                 window.location.href = App.href + "/login.html";
                             } else {
                                 alert(result.message);

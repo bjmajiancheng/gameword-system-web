@@ -71,7 +71,7 @@
             data: fields,
             success: function (result) {
                 if (result.code === 200) {
-                    $.cookie('gameword_company_token', result.token, {expires: 7});
+                    $.cookie('gameword_system_token', result.token, {expires: 7});
                     window.location.href = App.href + "/index.html";
                 } else {
                     alertValidate(result.message);

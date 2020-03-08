@@ -4,6 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <title>用户管理</title>
+    <style>
+        #systemUserWin .easyui-textbox {
+            width: 500px;
+        }
+    </style>
 </head>
 
 <body>
@@ -18,20 +23,20 @@
     </div>
 
     <div class="search-form-item col-md-3">
-        <a href="javascript:void(0)" onclick="refreshCompanyUser()" class="easyui-linkbutton primary">查询</a>
-        <a href="javascript:void(0)" onclick="addCompanyUser()" class="easyui-linkbutton primary">新增账号</a>
+        <a href="javascript:void(0)" onclick="refreshSystemUser()" class="easyui-linkbutton primary">查询</a>
+        <a href="javascript:void(0)" onclick="addSystemUser()" class="easyui-linkbutton primary">新增账号</a>
     </div>
 </div>
 
 <div class="clear"></div>
 <div class="super-theme-example">
     <div style="height: 400px;">
-        <table id="companyUserTab"></table>
+        <table id="systemUserTab"></table>
     </div>
 
 
-    <div id="companyUserWin" class="align_center" style="display: none;padding-top:30px;" title="新增用户">
-        <form id="companyUserForm" method="post">
+    <div id="systemUserWin" class="align_center" style="display: none;padding-top:30px;" title="新增用户">
+        <form id="systemUserForm" method="post">
             <input name="id" type="hidden" />
             <div class="form-item col-md-10">
                 <label class="label-top">账户：</label>
@@ -39,19 +44,17 @@
             </div>
             <div class="form-item col-md-10">
                 <label class="label-top">密码：</label>
-                <input id="userInfo_password" name="password" class="easyui-validatebox easyui-passwordbox" prompt="请输入密码" data-options="required:true, missingMessage:'请输入密码'">
+                <input id="user_password" name="password" class="easyui-validatebox easyui-textbox" prompt="请输入密码" data-options="required:true, missingMessage:'请输入密码'">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top" style="float:left;margin-left:32.7%;">角色：</label>
+
+                <span id="userRoleIdDev" class="col-md-5" style="float:left;text-align: left;">
+                </span>
             </div>
             <div class="form-item col-md-10">
                 <label class="label-top">显示名称：</label>
                 <input id="user_displayName" name="displayName" class="easyui-validatebox easyui-textbox" prompt="请输入显示名称" data-options="required:true, missingMessage:'请输入显示名称'">
-            </div>
-            <div class="form-item col-md-10">
-                <label class="label-top">角色：</label>
-                <input id="userRoleId" name="roleIds" class="easyui-combobox">
-            </div>
-            <div class="form-item col-md-10">
-                <label class="label-top">所属部门：</label>
-                <input id="userDeptId" name="deptId" class="easyui-combobox">
             </div>
             <div class="form-item col-md-10">
                 <label class="label-top">联系电话：</label>
@@ -71,22 +74,18 @@
         </form>
     </div>
 
-    <div id="companyUserDetailWin" style="display: none;padding-top:30px;" title="用户详情">
+    <div id="systemUserDetailWin" style="display: none;padding-top:30px;" title="用户详情">
         <div class="form-item col-md-10">
             <label class="label-top">账户：</label>
             <label class="label-top userNameLabel"></label>
-        </div>
-        <div class="form-item col-md-10">
-            <label class="label-top">显示名称：</label>
-            <label class="label-top displayNameLabel"></label>
         </div>
         <div class="form-item col-md-10">
             <label class="label-top">角色：</label>
             <label class="label-top userRoleLabel"></label>
         </div>
         <div class="form-item col-md-10">
-            <label class="label-top">所属部门：</label>
-            <label class="label-top userDeptLabel"></label>
+            <label class="label-top">显示名称：</label>
+            <label class="label-top displayNameLabel"></label>
         </div>
         <div class="form-item col-md-10">
             <label class="label-top">联系电话：</label>
@@ -101,34 +100,12 @@
             <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="closeUserDetail();">关闭</a>
         </div>
     </div>
-
-    <!--<div id="companyUserPasswordWin" class="align_center" style="display: none;padding-top:30px;" title="修改用户密码">
-        <form id="companyUserPasswordForm" method="post">
-            <input name="id" type="hidden" />
-            <div class="form-item col-md-10">
-                <label class="label-top">原密码：</label>
-                <input id="user_password" name="password" class="easyui-validatebox easyui-passwordbox" prompt="请输入原密码" data-options="required:true, missingMessage:'请输入原密码'">
-            </div>
-            <div class="form-item col-md-10">
-                <label class="label-top">新密码：</label>
-                <input id="user_newPassword" name="newPassword" class="easyui-validatebox easyui-passwordbox" prompt="请输入新密码" data-options="required:true, missingMessage:'请输入新密码'">
-            </div>
-            <div class="form-item col-md-10">
-                <label class="label-top">确认密码：</label>
-                <input id="user_newPasswordConfirm" name="newPasswordConfirm" class="easyui-validatebox easyui-passwordbox" prompt="请输入确认密码" data-options="required:true, missingMessage:'请输入确认密码'">
-            </div>
-            <div class="form-item col-md-10">
-                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="userPasswordInfoSave()">保存</a>
-                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="userPasswordInfoCancel()">取消</a>
-            </div>
-        </form>
-    </div>-->
 </div>
 
 <script type="text/javascript">
     ;(function ($, window, document, undefined){
-        $('#companyUserTab').datagrid({
-            url: App.href + '/api/common/companyUser/list',
+        $('#systemUserTab').datagrid({
+            url: App.href + '/api/core/user/list',
             fit: true,
             pagination: true,
             fitColumns: true,
@@ -166,7 +143,7 @@
                     width: 50,
                     formatter: function(value, row, index) {
                         if(row.isAdmin == 1) {
-                            return '<font color="red">'+row.userName + '*' + '</font>';
+                            return '<font color="red">'+ row.userName +'*</font>';
                         } else {
                             return row.userName;
                         }
@@ -198,13 +175,12 @@
                     formatter: function(value, row, index) {
                         var btns = new Array();
                         if(row.enabled == 0) {
-                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateUserEnabled(' + row.id + ', 1);">启用</a>&nbsp;');
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateUserEnabled('+ row.id +', 1);">启用</a>&nbsp;');
                         } else if(row.enabled == 1) {
                             btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateUserEnabled('+ row.id +', 0);">禁用</a>&nbsp;');
                         }
                         btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="userDetail('+ row.id +')">查看</a>&nbsp;');
-                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="editUser('+ row.id +')">修改</a>&nbsp;');
-                        /*btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="editUserPassword('+ row.id +')">修改密码</a>');*/
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="editUser('+ row.id +')">修改</a>');
                         return btns.join('');
                     }
 
@@ -215,31 +191,12 @@
         //初始化用户角色和部门信息
         initUserBaseInfo();
 
-        /*//密码修改表单提交
-        $('#companyUserPasswordForm').form({
-            url: App.href + '/api/common/companyUser/updateUserPassword',
-            method: 'POST',
-            onSubmit:function(){
-                return $(this).form('validate');
-            },
-            success:function(data){
-                var obj = JSON.parse(data);
-                if (obj.code == 200) {
-                    App.showMsg('保存成功');
-                    $('#companyUserPasswordWin').window('close');
-                } else {
-                    App.showMsg(obj.message);
-                }
-                refreshCompanyUser();
-            }
-        });*/
-
     })(jQuery, window, document);
 
 
 
-    function refreshCompanyUser() {
-        $('#companyUserTab').datagrid('reload');
+    function refreshSystemUser() {
+        $('#systemUserTab').datagrid('reload');
     }
 
     function updateUserEnabled(userId, enabled) {
@@ -249,9 +206,9 @@
         }
         $.messager.confirm('确认', '您确认想要'+ info +'用户吗？', function(r) {
             if(r) {
-                App.getRequestData('/api/common/companyUser/updateUserEnabled', {'userId': userId, 'enabled': enabled}, function(){
+                App.getRequestData('/api/core/user/updateUserEnabled', {'userId': userId, 'enabled': enabled}, function(){
                     App.showMsg(info + '操作成功');
-                    refreshCompanyUser();
+                    refreshSystemUser();
                 });
             }
         });
@@ -263,32 +220,24 @@
      */
     function initUserBaseInfo() {
         // 获取公司角色信息
-        App.getRequestData("/api/common/company/getCurrUserCompanyRoles", {}, function(data) {
-            data.rows.unshift({id:'0', roleName:'请选择'});
-            $("#userRoleId").combobox({
+        App.getRequestData("/api/core/user/getCurrUserRoles", {}, function(data) {
+            //var html = new Array();
+            for(var i=0; i<data.rows.length; i++) {
+                var row = data.rows[i];
+                $("#userRoleIdDev").append($('<label style="min-width:80px;"><input type="checkbox" name="roleIds" style="width:10px;" value="'+row.id+'"/>'+row.roleName+'</label>'));
+            }
+            //$("#userRoleIdDev").append($(html.join('')));
+            /*data.rows.unshift({id:'0', roleName:'请选择'});*/
+            /*$("#userRoleId").combobox({
                 valueField: 'id',
                 textField: 'roleName',
                 editable: false,
-                required: true,
                 multiple: true,
-                mode: 'local',
-                value: '0',
-                data: data.rows
-            });
-        });
-
-        // 获取公司部门信息
-        App.getRequestData("/api/common/company/getCurrUserCompanyDepts", {}, function(data) {
-            data.rows.unshift({id:'0', deptName:'请选择'});
-            $("#userDeptId").combobox({
-                valueField: 'id',
-                textField: 'deptName',
-                editable: false,
                 required: true,
                 mode: 'local',
                 value: '0',
                 data: data.rows
-            });
+            });*/
         });
     }
 
@@ -296,31 +245,25 @@
      * 保存用户信息
      */
     function userInfoSave() {
-        var deptId = $('#companyUserWin').find('input[name=deptId]').val();
-        var roleId = $('#companyUserWin').find('input[name=roleId]').val();
+        var roleId = $('#systemUserWin').find('input[name=roleId]').val();
 
         if(roleId == 0) {
             App.showMsg('请选择角色');
             return false;
         }
 
-        if(deptId == 0) {
-            App.showMsg('请选择部门');
-            return false;
-        }
-
-        $('#companyUserForm').submit();
+        $('#systemUserForm').submit();
     }
 
     /**
      * 取消用户信息
      */
     function userInfoCancel() {
-        $('#companyUserWin').window('close');
+        $('#systemUserWin').window('close');
     }
 
-    $('#companyUserForm').form({
-        url: App.href + '/api/common/companyUser/saveUser',
+    $('#systemUserForm').form({
+        url: App.href + '/api/core/user/saveUser',
         method: 'POST',
         onSubmit:function(){
             return $(this).form('validate');
@@ -329,11 +272,11 @@
             var obj = JSON.parse(data);
             if (obj.code == 200) {
                 App.showMsg('保存成功');
-                $('#companyUserWin').window('close');
+                $('#systemUserWin').window('close');
             } else {
                 App.showMsg(obj.message);
             }
-            refreshCompanyUser();
+            refreshSystemUser();
         }
     });
 
@@ -341,44 +284,44 @@
      * 添加公司用户
      *
      */
-    function addCompanyUser() {
-        $('#companyUserWin').window({
-            width:600,
-            height:400,
+    function addSystemUser() {
+        $('#systemUserWin').window({
+            width: '80%',
+            height: '80%',
             modal:true
         });
-        $('#companyUserWin').window({title: '添加用户'});
+        $('#systemUserWin').window({title: '添加用户'});
 
         $("#user_userName").textbox({disabled:false});
-
-        $("#companyUserForm").find("input[name=id]").val('');
+        $("#systemUserForm").find("input[name=id]").val('');
         $("#user_userName").textbox('setValue', '');
+        $("#user_password").textbox('setValue', '');
+        //$("#userRoleId").combobox('setValue', '0');
+        $("#userRoleIdDev").find("input[name=roleIds]").each(function(data){
+            $(this).prop("checked", false);
+        });
         $("#user_displayName").textbox('setValue', '');
-        $("#userRoleId").combobox('setValue', '0');
-        $("#userDeptId").combobox('setValue', '0');
         $("#user_contactPhone").textbox('setValue', '');
         $("#user_enabled").combobox('setValue', '1');
-        $("#userInfo_password").passwordbox('setValue', '');
 
-        $('#companyUserForm').form({'url': App.href + '/api/common/companyUser/saveUser'});
+        $('#systemUserForm').form({'url': App.href + '/api/core/user/saveUser'});
     }
 
     /**
      * 用户详情
      */
     function userDetail(userId) {
-        $('#companyUserDetailWin').window({
-            width:600,
-            height:400,
+        $('#systemUserDetailWin').window({
+            width: '80%',
+            height: '80%',
             modal:true
         });
-        $('#companyUserDetailWin').window({title: '用户详情'});
+        $('#systemUserDetailWin').window({title: '用户详情'});
 
-        App.getRequestData('/api/common/companyUser/getUser', {'userId': userId}, function(data) {
+        App.getRequestData('/api/core/user/getUser', {'userId': userId}, function(data) {
             $(".userNameLabel").text(data.userName);
-            $(".displayNameLabel").text(data.displayName);
             $(".userRoleLabel").text(data.roleName);
-            $(".userDeptLabel").text(data.deptName);
+            $(".displayNameLabel").text(data.displayName);
             $(".user_contactPhoneLabele").text(data.contactPhone);
 
             var enabledStr = "禁用";
@@ -394,73 +337,43 @@
      * 关闭用户详情窗口
      */
     function closeUserDetail() {
-        $('#companyUserDetailWin').window('close');
+        $('#systemUserDetailWin').window('close');
     }
 
     /**
      * 修改用户
      */
     function editUser(userId) {
-        $('#companyUserWin').window({
-            width:600,
-            height:400,
+        $('#systemUserWin').window({
+            width: '80%',
+            height: '80%',
             modal:true
         });
-        $('#companyUserWin').window({title: '用户修改'});
+        $('#systemUserWin').window({title: '用户修改'});
+
         $("#user_userName").textbox({disabled:true});
 
-        App.getRequestData('/api/common/companyUser/getUser', {'userId': userId}, function(data) {
-            $("#companyUserForm").find("input[name=id]").val(data.id);
-            $('#companyUserForm').form({'url': App.href + '/api/common/companyUser/updateUser'});
+        App.getRequestData('/api/core/user/getUser', {'userId': userId}, function(data) {
+            $("#systemUserForm").find("input[name=id]").val(data.id);
+            $('#systemUserForm').form({'url': App.href + '/api/core/user/updateUser'});
 
             $("#user_userName").textbox('setValue', data.userName);
-            $("#userInfo_password").passwordbox('setValue', data.password);
+            $("#user_password").textbox('setValue', data.password);
+            $("#userRoleIdDev").find("input[name=roleIds]").each(function(data){
+                $(this).prop("checked", false);
+            });
+
+            for(var i=0; i<data.roleIds.length; i++) {
+                $("#userRoleIdDev").find("input[name=roleIds][value="+data.roleIds[i]+"]").each(function(data){
+                    $(this).prop("checked", true);
+                });
+            }
             $("#user_displayName").textbox('setValue', data.displayName);
-            $("#userRoleId").combobox('setValue', data.roleIds);
-            $("#userDeptId").combobox('setValue', data.deptId);
+            //$("#userRoleId").combobox('setValue', data.roleIds);
             $("#user_contactPhone").textbox('setValue', data.contactPhone);
             $("#user_enabled").combobox('setValue', data.enabled);
         });
     }
-
-    /**
-     * 修改用户密码
-     * @param userId
-     */
-    /*function editUserPassword(userId) {
-        $('#companyUserPasswordWin').window({
-            width:600,
-            height:400,
-            modal:true
-        });
-
-        $("#companyUserPasswordForm").find("input[name=id]").val(userId);
-        $("#user_password").passwordbox('setValue', "");
-        $("#user_newPassword").passwordbox('setValue', "");
-        $("#user_newPasswordConfirm").passwordbox('setValue', "");
-    }
-
-    /!**
-     * 用户密码保存
-     *!/
-    function userPasswordInfoSave() {
-        var newPassword = $("#user_newPassword").textbox('getValue');
-        var newPasswordConfirm = $("#user_newPasswordConfirm").textbox('getValue');
-
-        if(newPassword != newPasswordConfirm) {
-            App.showMsg('新密码和确认密码不一致，请修改确认密码.');
-            return false;
-        }
-
-        $("#companyUserPasswordForm").submit();
-    }
-
-    /!**
-     * 用户密码修改取消
-     *!/
-    function userPasswordInfoCancel() {
-        $('#companyUserPasswordWin').window('close');
-    }*/
 </script>
 </body>
 

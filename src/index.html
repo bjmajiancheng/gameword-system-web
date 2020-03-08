@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="css/superBlue.css" id="themeCss">
     <script src="js/super.js" type="text/javascript" charset="utf-8"></script>-->
     <!--测试dist-->
+    <!--https://vxhly.coding.me/2016/09/font-awesome-icons/ 图标管理-->
     <!-- jQuery UI -->
     <link href="cdn/vendors/jquery-ui/jquery-ui.min.css" rel="stylesheet" media="screen">
     <link href="cdn/vendors/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -27,6 +28,7 @@
     <link rel="stylesheet" href="cdn/super/superBlue.css" id="themeCss">
     <link rel="stylesheet" href="css/common.css">
 
+
 </head>
 
 <body id="main" class="easyui-layout">
@@ -34,7 +36,7 @@
     <!--顶部-->
     <div class="super-navigation">
         <!--系统名称-->
-        <div class="super-navigation-title">企业运营后台</div>
+        <div class="super-navigation-title">平台运营后台</div>
         <!--自定义导航-->
         <div class="super-navigation-main">
             <div class="super-setting-left">
@@ -58,14 +60,14 @@
                     </li>
                     <li id="updatePass"><i class="fa fa-pencil-square-o" ></i>修改密码</li>
                     <li class="user">
-                        <span class="user-icon"><!--<img src="cdn/img/favicon.png"/>--></span><span id="gUserName"></span>
+                        <span class="user-icon"></span><span id="gUserName"></span>
                     </li>
                 </ul>
             </div>
         </div>
     </div>
 </div>
-<div data-options="region:'west',title:'企业运营后台',border:false" class="super-west">
+<div data-options="region:'west',title:'平台运营后台',border:false" class="super-west">
     <!--左侧导航 style="display:none;"-->
     <div class="easyui-accordion" data-options="border:false,fit:true,selected:true" id="vertical-menu" >
 
@@ -161,17 +163,18 @@
 <script src="cdn/vendors/zTree/js/jquery.ztree.excheck-3.5.min.js"></script>
 <script src="cdn/vendors/zTree/js/jquery.ztree.exedit-3.5.min.js"></script>
 
-<script src="js/app.js" type="text/javascript" charset="utf-8"></script>
-<script src="js/nav.js" type="text/javascript" charset="utf-8"></script>
-
 <!--<script src="cdn/vendors/easyui/jquery.easyui.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="cdn/vendors/easyui/locale/easyui-lang-zh_CN.js" type="text/javascript" charset="utf-8"></script>-->
+
+<script src="js/app.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/nav.js" type="text/javascript" charset="utf-8"></script>
 
 <script src="cdn/vendors/jquery-easyui-1.7.0/jquery.easyui.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="cdn/vendors/jquery-easyui-1.7.0/locale/easyui-lang-zh_CN.js" type="text/javascript" charset="utf-8"></script>
 
 <script src="cdn/vendors/jquery-easyui-texteditor/jquery.texteditor.js"></script>
 <!--<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=I9koTHOWtxzVXA60W8SyGDkObzLlrYFM"></script>-->
+
 <script type="text/javascript" src='http://webapi.amap.com/maps?v=1.4.15&key=8cd0ea9ca69f8e9e6a61d84c5ca3436f&plugin=AMap.PlaceSearch'></script>
 <script type="text/javascript" src='http://webapi.amap.com/maps?v=1.4.15&key=f91e3b7c163fa4411d39c0fd497cbde9&plugin=AMap.Geocoder'></script>
 <script src="http://webapi.amap.com/ui/1.0/main.js?v=1.0.11"></script>
@@ -185,17 +188,13 @@
     ;(function ($, window, document, undefined){
         window.App.page = {};
         window.App.page.urls = [
-            "dvd/system/function.html",
-            "dvd/system/role.html",
             "dvd/system/user.html",
-            "dvd/system/dept.html",
-            "dvd/company/company.html",
-            "dvd/company/coolplayBase.html",
-            "dvd/company/companyCircle.html"
+            "dvd/system/role.html",
+            "dvd/system/function.html",
         ];
 
         $('#userPassForm').form({
-            url: App.href + '/api/common/companyUser/updateUserPass',
+            url: App.href + '/api/core/user/updateUserPass',
             method: 'POST',
             onSubmit:function(){
                 return $(this).form('validate');

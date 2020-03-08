@@ -14,19 +14,19 @@
     </div>
 
     <div class="search-form-item col-md-3">
-        <a href="javascript:void(0)" onclick="refreshCompanyFunction()" class="easyui-linkbutton primary">查询</a>
-        <a href="javascript:void(0)" onclick="addCompanyFunction()" class="easyui-linkbutton primary">新增菜单</a>
+        <a href="javascript:void(0)" onclick="refreshSystemFunction()" class="easyui-linkbutton primary">查询</a>
+        <a href="javascript:void(0)" onclick="addSystemFunction()" class="easyui-linkbutton primary">新增菜单</a>
     </div>
 </div>
 
 <div class="clear"></div>
 <div class="super-theme-example">
     <div style="height: 400px;">
-        <table id="companyFunctionTab"></table>
+        <table id="systemFunctionTab"></table>
     </div>
 
-    <div id="companyFunctionWin" style="display: none;padding-top:30px;" title="新增菜单">
-        <form id="companyFunctionForm" method="post">
+    <div id="systemFunctionWin" style="display: none;padding-top:30px;" title="新增菜单">
+        <form id="systemFunctionForm" method="post">
             <input type="hidden" name="id" />
             <div class="form-item col-md-12">
                 <label class="label-top col-md-1">父菜单：</label>
@@ -37,12 +37,12 @@
 
             <div class="form-item col-md-12">
                 <label class="label-top">菜单名称：</label>
-                <input id="companyFunctionForm_functionName" class="easyui-validatebox easyui-textbox" prompt="请输入菜单名称" name="functionName" data-options="required:true, missingMessage:'请输入菜单名称'">
+                <input id="systemFunctionForm_functionName" class="easyui-validatebox easyui-textbox" prompt="请输入菜单名称" name="functionName" data-options="required:true, missingMessage:'请输入菜单名称'">
             </div>
 
             <div class="form-item col-md-12">
                 <label class="label-top">菜单路径：</label>
-                <input id="companyFunctionForm_action" class="easyui-validatebox easyui-textbox" prompt="请输入菜单路径" name="action" data-options="required:true, missingMessage:'请输入菜单路径'">
+                <input id="systemFunctionForm_action" class="easyui-validatebox easyui-textbox" prompt="请输入菜单路径" name="action" data-options="required:true, missingMessage:'请输入菜单路径'">
             </div>
 
             <div class="form-item col-md-12">
@@ -57,22 +57,22 @@
 
             <div class="form-item col-md-12">
                 <label class="label-top">排序号：</label>
-                <input id="companyFunctionForm_sort" class="easyui-validatebox easyui-textbox" prompt="请输入排序号" name="sort" data-options="required:true, missingMessage:'请输入排序号', validType:'isNumber'">
+                <input id="systemFunctionForm_sort" class="easyui-validatebox easyui-textbox" prompt="请输入排序号" name="sort" data-options="required:true, missingMessage:'请输入排序号', validType:'isNumber'">
             </div>
 
             <div class="form-item col-md-12">
                 <label class="label-top">菜单图标：</label>
-                <input id="companyFunctionForm_icon" class="easyui-textbox" prompt="请输入菜单图标" name="icon">
+                <input id="systemFunctionForm_icon" class="easyui-textbox" prompt="请输入菜单图标" name="icon">
             </div>
 
             <div class="form-item col-md-12">
-                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="saveCompanyFunction()">保存</a>
-                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="cancelCompanyFunction()">取消</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="saveSystemFunction()">保存</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="canalSystemFunction()">取消</a>
             </div>
         </form>
     </div>
 
-    <div id="companyFunctionDetailWin" style="display: none;padding-top:30px;" title="菜单详情">
+    <div id="systemFunctionDetailWin" style="display: none;padding-top:30px;" title="菜单详情">
         <div class="form-item col-md-12">
             <label class="label-top col-md-1">父菜单：</label>
             <label class="label-top parentFunctionNameLabel"></label>
@@ -80,12 +80,12 @@
 
         <div class="form-item col-md-12">
             <label class="label-top">菜单名称：</label>
-            <label class="label-top companyFunctionForm_functionNameLabel"></label>
+            <label class="label-top systemFunctionForm_functionNameLabel"></label>
         </div>
 
         <div class="form-item col-md-12">
             <label class="label-top">菜单路径：</label>
-            <label class="label-top companyFunctionForm_actionLabel"></label>
+            <label class="label-top systemFunctionForm_actionLabel"></label>
         </div>
 
         <div class="form-item col-md-12">
@@ -95,16 +95,16 @@
 
         <div class="form-item col-md-12">
             <label class="label-top">排序号：</label>
-            <label class="label-top companyFunctionForm_sortLabel"></label>
+            <label class="label-top systemFunctionForm_sortLabel"></label>
         </div>
 
         <div class="form-item col-md-12">
             <label class="label-top">菜单图标：</label>
-            <label class="label-top companyFunctionForm_iconLabel"></label>
+            <label class="label-top systemFunctionForm_iconLabel"></label>
         </div>
 
         <div class="form-item col-md-12">
-            <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="closeCompanyFunctionDetail()">关闭</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="closeSystemFunctionDetail()">关闭</a>
         </div>
     </div>
 </div>
@@ -113,8 +113,8 @@
 
     ;(function ($, window, document, undefined){
 
-        $('#companyFunctionTab').datagrid({
-            url: App.href + '/api/common/companyFunction/list',
+        $('#systemFunctionTab').datagrid({
+            url: App.href + '/api/core/function/list',
             fit: true,
             pagination: true,
             fitColumns: true,
@@ -174,16 +174,16 @@
                     align: 'center',
                     formatter: function(value, row, index) {
                         var btns = new Array();
-                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="showCompanyFunction('+ row.id +')">查看</a>&nbsp;');
-                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateCompanyFunction('+ row.id +')">修改</a>');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="showSystemFunction('+ row.id +')">查看</a>&nbsp;');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateSystemFunction('+ row.id +')">修改</a>');
                         return btns.join('');
                     }
                 }]
             ]
         });
 
-        $('#companyFunctionForm').form({
-            url: App.href + '/api/common/companyFunction/saveCompanyFunction',
+        $('#systemFunctionForm').form({
+            url: App.href + '/api/core/function/saveFunction',
             method: 'POST',
             onSubmit:function(){
                 return $(this).form('validate');
@@ -192,11 +192,11 @@
                 var obj = JSON.parse(data);
                 if (obj.code == 200) {
                     App.showMsg('保存成功');
-                    $('#companyFunctionWin').window('close');
+                    $('#systemFunctionWin').window('close');
                 } else {
                     App.showMsg(obj.message);
                 }
-                refreshCompanyFunction();
+                refreshSystemFunction();
             }
         });
 
@@ -207,52 +207,52 @@
      */
     function initFunctionTree() {
         $.fn.zTree.init($("#tree_functionTree"), App.treeSetting({
-            url: App.href + "/api/common/companyFunction/treeNodes",
+            url: App.href + "/api/core/function/treeNodes",
             expandAll: true,
             autoParam: ["id", "name", "pId"],
             chkStyle: "radio"
         }));
     }
 
-    function refreshCompanyFunction() {
-        $('#companyFunctionTab').datagrid('reload');
+    function refreshSystemFunction() {
+        $('#systemFunctionTab').datagrid('reload');
     }
 
     /**
      * 添加公司角色
      *
      */
-    function addCompanyFunction() {
-        $('#companyFunctionWin').window({
+    function addSystemFunction() {
+        $('#systemFunctionWin').window({
             width: "80%",
             height: "80%",
             modal:true
         });
 
         initFunctionTree();
-        $('#companyFunctionForm').form({'url': App.href + '/api/common/companyFunction/saveCompanyFunction'});
-        $('#companyFunctionWin').window({title: '添加菜单'});
+        $('#systemFunctionForm').form({'url': App.href + '/api/core/function/saveFunction'});
+        $('#systemFunctionWin').window({title: '添加菜单'});
 
-        $("#companyFunctionForm").find("input[name=id]").val('');
-        $("#companyFunctionForm_functionName").textbox('setValue', '');
-        $("#companyFunctionForm_action").textbox('setValue', '');
-        $("#companyFunctionForm_sort").textbox('setValue', '');
-        $("#companyFunctionForm_icon").textbox('setValue', '');
-        $('#companyFunctionForm').find('input[name=parentId]').attr('value', '');
+        $("#systemFunctionForm").find("input[name=id]").val('');
+        $("#systemFunctionForm_functionName").textbox('setValue', '');
+        $("#systemFunctionForm_action").textbox('setValue', '');
+        $("#systemFunctionForm_sort").textbox('setValue', '');
+        $("#systemFunctionForm_icon").textbox('setValue', '');
+        $('#systemFunctionForm').find('input[name=parentId]').attr('value', '');
     }
 
     /**
      * 保存菜单信息
      */
-    function saveCompanyFunction() {
-        $('#companyFunctionForm').submit();
+    function saveSystemFunction() {
+        $('#systemFunctionForm').submit();
     }
 
     /**
      * 取消新增权限
      */
-    function cancelCompanyFunction() {
-        $('#companyFunctionWin').window('close');
+    function cancelSystemFunction() {
+        $('#systemFunctionWin').window('close');
     }
 
     /**
@@ -260,26 +260,26 @@
      *
      * @param id
      */
-    function updateCompanyFunction(id) {
-        $('#companyFunctionWin').window({
+    function updateSystemFunction(id) {
+        $('#systemFunctionWin').window({
             width: "80%",
             height: "80%",
             modal:true
         });
 
-        App.getRequestData('/api/common/companyFunction/getCompanyFunction', {'id': id}, function(data){
-            $('#companyFunctionForm').form({'url': App.href + '/api/common/companyFunction/updateCompanyFunction'});
-            $('#companyFunctionWin').window({title: '更新菜单'});
+        App.getRequestData('/api/core/function/getFunction', {'id': id}, function(data){
+            $('#systemFunctionForm').form({'url': App.href + '/api/core/function/updateFunction'});
+            $('#systemFunctionWin').window({title: '更新菜单'});
 
-            $("#companyFunctionForm").find("input[name=id]").val(data.id);
-            $("#companyFunctionForm_functionName").textbox('setValue', data.functionName);
-            $("#companyFunctionForm_action").textbox('setValue', data.action);
-            $("#companyFunctionForm_sort").textbox('setValue', data.sort);
-            $("#companyFunctionForm_icon").textbox('setValue', data.icon);
-            $("#companyFunctionForm").find("");
+            $("#systemFunctionForm").find("input[name=id]").val(data.id);
+            $("#systemFunctionForm_functionName").textbox('setValue', data.functionName);
+            $("#systemFunctionForm_action").textbox('setValue', data.action);
+            $("#systemFunctionForm_sort").textbox('setValue', data.sort);
+            $("#systemFunctionForm_icon").textbox('setValue', data.icon);
+            $("#systemFunctionForm").find("");
 
             if(data.parentId) {
-                $('#companyFunctionForm').find('input[name=parentId]').attr('value', data.parentId);
+                $('#systemFunctionForm').find('input[name=parentId]').attr('value', data.parentId);
             }
             initFunctionTree();
         });
@@ -290,25 +290,25 @@
      *
      * @param id
      */
-    function showCompanyFunction(id) {
-        $('#companyFunctionDetailWin').window({
+    function showSystemFunction(id) {
+        $('#systemFunctionDetailWin').window({
             width: "80%",
             height: "80%",
             modal:true
         });
 
-        App.getRequestData('/api/common/companyFunction/getCompanyFunction', {'id': id}, function(data){
+        App.getRequestData('/api/core/function/getFunction', {'id': id}, function(data){
             var displayStr = "隐藏";
             if(data.display == 1) {
                 displayStr = "显示";
             }
 
             $(".parentFunctionNameLabel").text(data.parentFunctionName);
-            $(".companyFunctionForm_functionNameLabel").text(data.functionName);
-            $(".companyFunctionForm_actionLabel").text(data.action);
+            $(".systemFunctionForm_functionNameLabel").text(data.functionName);
+            $(".systemFunctionForm_actionLabel").text(data.action);
             $(".displayLabel").text(displayStr);
-            $(".companyFunctionForm_sortLabel").text(data.sort);
-            $(".companyFunctionForm_iconLabel").text(data.icon);
+            $(".systemFunctionForm_sortLabel").text(data.sort);
+            $(".systemFunctionForm_iconLabel").text(data.icon);
         });
 
     }
@@ -316,8 +316,8 @@
     /**
      * 关闭公司菜单详情
      */
-    function closeCompanyFunctionDetail() {
-        $("#companyFunctionDetailWin").window('close');
+    function closeSystemFunctionDetail() {
+        $("#systemFunctionDetailWin").window('close');
     }
 
 </script>
