@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>国家管理</title>
+</head>
+<body>
+<div class="super-theme-example">
+    <div class="search-form-item col-md-4">
+        <label class="label-top">国家中文名称：</label>
+        <input name="countryCnName" class="easyui-validatebox easyui-textbox" prompt="请输入国家中文名称">
+    </div>
+    <div class="search-form-item col-md-4">
+        <label class="label-top">国家英文名称：</label>
+        <input name="countryEnName" class="easyui-validatebox easyui-textbox" prompt="请输入国家英文名称">
+    </div>
+    <div class="search-form-item col-md-4">
+        <label class="label-top">国家代码值：</label>
+        <input name="code" class="easyui-validatebox easyui-textbox" prompt="请输入国家代码值">
+    </div>
+
+    <div class="search-form-item col-md-3">
+        <a href="javascript:void(0)" onclick="refresh()" class="easyui-linkbutton primary">查询</a>
+        <a href="javascript:void(0)" onclick="add()" class="easyui-linkbutton primary">新增</a>
+    </div>
+</div>
+
+<div class="clear"></div>
+<div class="super-theme-example">
+    <div style="height: 400px;">
+        <table id="countryTab"></table>
+    </div>
+
+    <div id="countryWin" style="display: none;padding-top:30px;padding-left:100px;" title="新增">
+        <form id="countryForm" method="post">
+            <input name="id" type="hidden" />
+            <div class="form-item col-md-10">
+                <label class="label-top">国家中文名称：</label>
+                <input id="country_countryCnName" class="easyui-validatebox easyui-textbox" prompt="请输入国家中文名称" name="countryCnName" data-options="required:true, missingMessage:'请输入国家中文名称'">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top">国家英文名称：</label>
+                <input id="country_countryEnName" class="easyui-validatebox easyui-textbox" prompt="请输入国家英文名称" name="countryEnName" data-options="required:true, missingMessage:'请输入国家英文名称'">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top">国家代码值：</label>
+                <input id="country_code" class="easyui-validatebox easyui-textbox" prompt="请输入国家代码值" name="code" data-options="required:true, missingMessage:'请输入国家代码值'">
+            </div>
+            <div class="form-item col-md-10">
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="save()">保存</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="cancel()">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    ;(function ($, window, document, undefined){
+        $('#countryTab').datagrid({
+            url: App.href + '/api/common/country/list',
+            fit: true,
+            pagination: true,
+            fitColumns: true,
+            method: 'GET',
+            pageSize: 10,
+            pageList: [10, 25, 50, 100, 200],
+            height: 400,
+            queryParams: {},
+            toolbar: [],
+            loadFilter: function(data) {
+                if (data.code === 401) {
+                    App.showMsg('token失效,请登录!');
+                    window.location.href = App.href + '/login.html';
+                    return {"total":0, "rows": "[]"};
+                } else {
+                    return data;
+                }
+            },
+            onBeforeLoad: function (param) {
+                var countryCnName = $("input[name=countryCnName]").val();
+                var countryEnName = $("input[name=countryEnName]").val();
+                var code = $("input[name=code]").val();
+
+                param.countryCnName = countryCnName;
+                param.countryEnName = countryEnName;
+                param.code = code;
+            },
+            columns: [
+                [{
+                    field: 'id',
+                    title: '序号',
+                    sortable: true,
+                    width: 50
+                }, {
+                    field: 'countryCnName',
+                    title: '国家中文名称',
+                    width: 50
+                }, {
+                    field: 'countryEnName',
+                    title: '国家英文名称',
+                    width: 50
+                }, {
+                    field: 'code',
+                    title: '国家代码值',
+                    width: 50
+                }, {
+                    field: 'createUserName',
+                    title: '创建人',
+                    width: 50
+                }, {
+                    field: 'ctime',
+                    title: '创建时间',
+                    width: 50
+                }, {
+                    field: 'updateUserName',
+                    title: '最后修改人',
+                    width: 50
+                }, {
+                    field: 'utime',
+                    title: '最后修改时间',
+                    width: 50
+                }, {
+                    field: 'custom_col1',
+                    title: '操作',
+                    width: 50,
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var btns = new Array();
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="update(' + row.id + ')">修改</a>&nbsp;');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="del(' + row.id + ')">删除</a>');
+                        return btns.join('');
+                    }
+                }]
+            ]
+        });
+
+        $('#countryForm').form({
+            url: App.href + '/api/common/country/save',
+            method: 'POST',
+            onSubmit:function(){
+                return $(this).form('validate');
+            },
+            success:function(data){
+                var obj = JSON.parse(data);
+                if (obj.code == 200) {
+                    App.showMsg('保存成功');
+                    $('#countryWin').window('close');
+                } else {
+                    App.showMsg(obj.message);
+                }
+                refresh();
+            }
+        });
+
+    })(jQuery, window, document);
+
+
+    function refresh() {
+        $('#countryTab').datagrid('reload');
+    }
+
+    /**
+     * 添加
+     *
+     */
+    function add() {
+        $('#countryWin').window({
+            width: "80%",
+            height: "80%",
+            modal:true
+        });
+        $('#countryForm').form({'url': App.href + '/api/common/country/save'});
+        $('#countryWin').window({title: '新增'});
+        $("#country_roleName").textbox('setValue', '');
+        $('#countryForm').find('input[name=functionIds]').attr('value', '');
+        $("#countryForm").find("input[name=id]").val('');
+    }
+
+    /**
+     * 新增
+     */
+    function save() {
+
+        $('#countryForm').submit();
+    }
+
+    /**
+     * 关闭弹框
+     */
+    function cancel() {
+        $('#countryWin').window('close');
+    }
+
+    /**
+     * 更新
+     * @param id
+     */
+    function update(id) {
+        $('#countryWin').window({
+            width: "80%",
+            height: "80%",
+            modal:true
+        });
+
+        App.getRequestData('/api/common/country/get', {'id': id}, function(data){
+            $('#countryForm').form({'url': App.href + '/api/common/country/update'});
+            $('#countryWin').window({title: '更新'});
+
+            $("#countryForm").find("input[name=id]").val(data.id);
+            $("#country_roleName").textbox('setValue', data.roleName);
+        });
+    }
+
+    /**
+     * 删除
+     * @param id
+     */
+    function del(id) {
+        $.messager.confirm('提示', '确定删除国家？', function(r) {
+            if(r) {
+                App.getRequestData('/api/common/country/del', {id: id, status: 0}, function(data){
+                    App.showMsg('删除成功');
+                    refresh();
+                });
+            }
+        });
+    }
+
+</script>
+
+</body>
+</html>

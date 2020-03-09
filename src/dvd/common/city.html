@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>城市管理</title>
+</head>
+<body>
+<div class="super-theme-example">
+    <div class="search-form-item col-md-4">
+        <label class="label-top">国家中文名称：</label>
+        <input name="countryCnName" class="easyui-validatebox easyui-textbox" prompt="请输入国家中文名称">
+    </div>
+    <div class="search-form-item col-md-4">
+        <label class="label-top">国家英文名称：</label>
+        <input name="countryEnName" class="easyui-validatebox easyui-textbox" prompt="请输入国家英文名称">
+    </div>
+    <div class="search-form-item col-md-4">
+        <label class="label-top">国家代码值：</label>
+        <input name="countryCode" class="easyui-validatebox easyui-textbox" prompt="请输入国家代码值">
+    </div>
+    <div class="search-form-item col-md-4">
+        <label class="label-top">城市中文名称：</label>
+        <input name="cityCn" class="easyui-validatebox easyui-textbox" prompt="请输入城市中文名称">
+    </div>
+    <div class="search-form-item col-md-4">
+        <label class="label-top">城市英文名称：</label>
+        <input name="cityEn" class="easyui-validatebox easyui-textbox" prompt="请输入城市英文名称">
+    </div>
+    <div class="search-form-item col-md-4">
+        <label class="label-top">城市代码值：</label>
+        <input name="code" class="easyui-validatebox easyui-textbox" prompt="请输入城市代码值">
+    </div>
+    <div class="search-form-item col-md-4">
+        <label class="label-top">驿站反馈人：</label>
+        <input name="contact" class="easyui-validatebox easyui-textbox" prompt="请输入驿站反馈人">
+    </div>
+    <div class="search-form-item col-md-4">
+        <label class="label-top">驿站反馈邮箱：</label>
+        <input name="email" class="easyui-validatebox easyui-textbox" prompt="请输入驿站反馈邮箱">
+    </div>
+
+    <div class="search-form-item col-md-3">
+        <a href="javascript:void(0)" onclick="refresh()" class="easyui-linkbutton primary">查询</a>
+        <a href="javascript:void(0)" onclick="add()" class="easyui-linkbutton primary">新增</a>
+    </div>
+</div>
+
+<div class="clear"></div>
+<div class="super-theme-example">
+    <div style="height: 400px;">
+        <table id="cityTab"></table>
+    </div>
+
+    <div id="cityWin" style="display: none;padding-top:30px;padding-left:100px;" title="新增">
+        <form id="cityForm" method="post">
+            <input name="id" type="hidden" />
+            <div class="form-item col-md-10">
+                <label class="label-top">国家：</label>
+                <input id="city_countryId" class="easyui-validatebox easyui-textbox" prompt="请输入国家" name="countryId" data-options="required:true, missingMessage:'请输入国家'">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top">城市中文名称：</label>
+                <input id="city_cityCn" class="easyui-validatebox easyui-textbox" prompt="请输入城市中文名称" name="cityCn" data-options="required:true, missingMessage:'请输入城市中文名称'">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top">城市英文名称：</label>
+                <input id="city_cityEn" class="easyui-validatebox easyui-textbox" prompt="请输入城市英文名称" name="cityEn" data-options="required:true, missingMessage:'请输入城市英文名称'">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top">城市代码值：</label>
+                <input id="city_code" class="easyui-validatebox easyui-textbox" prompt="请输入城市代码值" name="code" data-options="required:true, missingMessage:'请输入城市代码值'">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top">联系人名称：</label>
+                <input id="city_contact" class="easyui-validatebox easyui-textbox" prompt="请输入联系人名称" name="contact" data-options="required:true, missingMessage:'请输入联系人名称'">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top">email：</label>
+                <input id="city_email" class="easyui-validatebox easyui-textbox" prompt="请输入email" name="email" data-options="required:true, missingMessage:'请输入email'">
+            </div>
+            <div class="form-item col-md-10">
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="save()">保存</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="cancel()">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    ;(function ($, window, document, undefined){
+        $('#cityTab').datagrid({
+            url: App.href + '/api/common/city/list',
+            fit: true,
+            pagination: true,
+            fitColumns: true,
+            method: 'GET',
+            pageSize: 10,
+            pageList: [10, 25, 50, 100, 200],
+            height: 400,
+            queryParams: {},
+            toolbar: [],
+            loadFilter: function(data) {
+                if (data.code === 401) {
+                    App.showMsg('token失效,请登录!');
+                    window.location.href = App.href + '/login.html';
+                    return {"total":0, "rows": "[]"};
+                } else {
+                    return data;
+                }
+            },
+            onBeforeLoad: function (param) {
+                var countryCnName = $("input[name=countryCnName]").val();
+                var countryEnName = $("input[name=countryEnName]").val();
+                var countryCode = $("input[name=countryCode]").val();
+                var cityCn = $("input[name=cityCn]").val();
+                var cityEn = $("input[name=cityEn]").val();
+                var code = $("input[name=code]").val();
+                var contact = $("input[name=contact]").val();
+                var email = $("input[name=email]").val();
+
+                param.countryCnName = countryCnName;
+                param.countryEnName = countryEnName;
+                param.countryCode = countryCode;
+                param.cityCn = cityCn;
+                param.cityEn = cityEn;
+                param.code = code;
+                param.contact = contact;
+                param.email = email;
+            },
+            columns: [
+                [{
+                    field: 'id',
+                    title: '序号',
+                    sortable: true,
+                    width: 50
+                }, {
+                    field: 'countryCnName',
+                    title: '国家中文名称',
+                    width: 50
+                }, {
+                    field: 'countryEnName',
+                    title: '国家英文名称',
+                    width: 50
+                }, {
+                    field: 'countryCode',
+                    title: '国家代码值',
+                    width: 50
+                }, {
+                    field: 'cityCn',
+                    title: '城市中文名称',
+                    width: 50
+                }, {
+                    field: 'cityEn',
+                    title: '城市英文名称',
+                    width: 50
+                }, {
+                    field: 'code',
+                    title: '城市代码值',
+                    width: 50
+                }, {
+                    field: 'contact',
+                    title: '驿站反馈人',
+                    width: 50
+                }, {
+                    field: 'email',
+                    title: '驿站反馈邮箱',
+                    width: 50
+                }, {
+                    field: 'createUserName',
+                    title: '创建人',
+                    width: 50
+                }, {
+                    field: 'ctime',
+                    title: '创建时间',
+                    width: 50
+                }, {
+                    field: 'updateUserName',
+                    title: '最后修改人',
+                    width: 50
+                }, {
+                    field: 'utime',
+                    title: '最后修改时间',
+                    width: 50
+                }, {
+                    field: 'custom_col1',
+                    title: '操作',
+                    width: 50,
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var btns = new Array();
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="update(' + row.id + ')">修改</a>&nbsp;');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="del(' + row.id + ')">删除</a>');
+                        return btns.join('');
+                    }
+                }]
+            ]
+        });
+
+        $('#cityForm').form({
+            url: App.href + '/api/common/city/save',
+            method: 'POST',
+            onSubmit:function(){
+                return $(this).form('validate');
+            },
+            success:function(data){
+                var obj = JSON.parse(data);
+                if (obj.code == 200) {
+                    App.showMsg('保存成功');
+                    $('#cityWin').window('close');
+                } else {
+                    App.showMsg(obj.message);
+                }
+                refresh();
+            }
+        });
+
+    })(jQuery, window, document);
+
+
+    function refresh() {
+        $('#cityTab').datagrid('reload');
+    }
+
+    /**
+     * 添加
+     *
+     */
+    function add() {
+        $('#cityWin').window({
+            width: "80%",
+            height: "80%",
+            modal:true
+        });
+        $('#cityForm').form({'url': App.href + '/api/common/country/save'});
+        $('#cityWin').window({title: '新增'});
+        $("#cityForm").find("input[name=id]").val('');
+    }
+
+    /**
+     * 新增
+     */
+    function save() {
+
+        $('#cityForm').submit();
+    }
+
+    /**
+     * 关闭弹框
+     */
+    function cancel() {
+        $('#cityWin').window('close');
+    }
+
+    /**
+     * 更新
+     * @param id
+     */
+    function update(id) {
+        $('#cityWin').window({
+            width: "80%",
+            height: "80%",
+            modal:true
+        });
+
+        App.getRequestData('/api/common/city/get', {'id': id}, function(data){
+            $('#cityForm').form({'url': App.href + '/api/common/city/update'});
+            $('#cityWin').window({title: '更新'});
+
+            $("#cityForm").find("input[name=id]").val(data.id);
+        });
+    }
+
+    /**
+     * 删除
+     * @param id
+     */
+    function del(id) {
+        $.messager.confirm('提示', '确定删除城市？', function(r) {
+            if(r) {
+                App.getRequestData('/api/common/city/del', {id: id, status: 0}, function(data){
+                    App.showMsg('删除成功');
+                    refresh();
+                });
+            }
+        });
+    }
+
+</script>
+
+</body>
+</html>

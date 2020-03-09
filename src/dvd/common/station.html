@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>城市驿站管理</title>
+</head>
+<body>
+<div class="super-theme-example">
+    <div class="search-form-item col-md-4">
+        <label class="label-top">角色名称：</label>
+        <input name="roleName" class="easyui-validatebox easyui-textbox" prompt="请输入角色名称">
+    </div>
+
+    <div class="search-form-item col-md-3">
+        <a href="javascript:void(0)" onclick="refreshSystemRole()" class="easyui-linkbutton primary">查询</a>
+        <a href="javascript:void(0)" onclick="addSystemRole()" class="easyui-linkbutton primary">新增角色</a>
+    </div>
+</div>
+
+<div class="clear"></div>
+<div class="super-theme-example">
+    <div style="height: 400px;">
+        <table id="systemRoleTab"></table>
+    </div>
+
+    <div id="systemRoleWin" style="display: none;padding-top:30px;padding-left:100px;" title="新增角色">
+        <form id="systemRoleForm" method="post">
+            <input name="id" type="hidden" />
+            <div class="form-item col-md-10">
+                <label class="label-top">角色名称：</label>
+                <input id="systemRole_roleName" class="easyui-validatebox easyui-textbox" prompt="请输入角色名称" name="roleName" data-options="required:true, missingMessage:'请输入角色名称'">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top" style="float:left;">绑定权限：</label>
+
+                <input role="tree_roleTree_input" data-type="tree-input" type="text" name="functionIds" value="" class="hide"/>
+                <ul id="tree_roleTree" class="ztree col-md-8"></ul>
+            </div>
+            <div class="form-item col-md-10">
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="roleInfoSave()">保存</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="roleInfoCancel()">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    ;(function ($, window, document, undefined){
+        $('#systemRoleTab').datagrid({
+            url: App.href + '/api/core/role/list',
+            fit: true,
+            pagination: true,
+            fitColumns: true,
+            method: 'GET',
+            pageSize: 10,
+            pageList: [10, 25, 50, 100, 200],
+            height: 400,
+            queryParams: {},
+            toolbar: [],
+            loadFilter: function(data) {
+                if (data.code === 401) {
+                    App.showMsg('token失效,请登录!');
+                    window.location.href = App.href + '/login.html';
+                    return {"total":0, "rows": "[]"};
+                } else {
+                    return data;
+                }
+            },
+            onBeforeLoad: function (param) {
+                var roleName = $("input[name=roleName]").val();
+
+                param.roleName = roleName;
+            },
+            columns: [
+                [{
+                    field: 'id',
+                    title: '序号',
+                    sortable: true,
+                    width: 50
+                }, {
+                    field: 'roleName',
+                    title: '角色名称',
+                    width: 50
+                }, {
+                    field: 'ctime',
+                    title: '创建时间',
+                    width: 50
+                }, {
+                    field: 'custom_col1',
+                    title: '操作',
+                    width: 50,
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var btns = new Array();
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateRole(' + row.id + ')">绑定权限</a>&nbsp;');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="delRole(' + row.id + ')">删除</a>');
+                        return btns.join('');
+                    }
+                }]
+            ]
+        });
+
+        $('#systemRoleForm').form({
+            url: App.href + '/api/core/role/saveRole',
+            method: 'POST',
+            onSubmit:function(){
+                return $(this).form('validate');
+            },
+            success:function(data){
+                var obj = JSON.parse(data);
+                if (obj.code == 200) {
+                    App.showMsg('保存成功');
+                    $('#systemRoleWin').window('close');
+                } else {
+                    App.showMsg(obj.message);
+                }
+                refreshSystemRole();
+            }
+        });
+
+    })(jQuery, window, document);
+
+    /**
+     * 初始化角色树
+     */
+    function initRoleTree() {
+        $.fn.zTree.init($("#tree_roleTree"), App.treeSetting({
+            url: App.href + "/api/core/function/treeNodes",
+            expandAll: true,
+            autoParam: ["id", "name", "pId"],
+            chkboxType: {"Y": "ps", "N": "ps"},
+            chkStyle: "checkbox"
+        }));
+    }
+
+
+    function refreshSystemRole() {
+        $('#systemRoleTab').datagrid('reload');
+    }
+
+    /**
+     * 添加公司角色
+     *
+     */
+    function addSystemRole() {
+        $('#systemRoleWin').window({
+            width: "80%",
+            height: "80%",
+            modal:true
+        });
+        $('#systemRoleForm').form({'url': App.href + '/api/core/role/saveRole'});
+        $('#systemRoleWin').window({title: '新增角色'});
+        $("#systemRole_roleName").textbox('setValue', '');
+        $('#systemRoleForm').find('input[name=functionIds]').attr('value', '');
+        $("#systemRoleForm").find("input[name=id]").val('');
+        initRoleTree();
+    }
+
+    /**
+     * 角色新增
+     */
+    function roleInfoSave() {
+        var functionIds = $('#systemRoleWin').find('input[name=functionIds]').val();
+
+        if(functionIds == '') {
+            App.showMsg('请选择绑定权限');
+            return false;
+        }
+
+        $('#systemRoleForm').submit();
+    }
+
+    /**
+     * 角色菜单关闭
+     */
+    function roleInfoCancel() {
+        $('#systemRoleWin').window('close');
+    }
+
+    /**
+     * 更新角色
+     * @param id
+     */
+    function updateRole(id) {
+        $('#systemRoleWin').window({
+            width: "80%",
+            height: "80%",
+            modal:true
+        });
+
+        App.getRequestData('/api/core/role/getRole', {'id': id}, function(data){
+            $('#systemRoleForm').form({'url': App.href + '/api/core/role/updateRole'});
+            $('#systemRoleWin').window({title: '更新角色'});
+
+            $("#systemRoleForm").find("input[name=id]").val(data.id);
+            $("#systemRole_roleName").textbox('setValue', data.roleName);
+            if(data.functionIds && data.functionIds.length > 0) {
+                $('#systemRoleForm').find('input[name=functionIds]').attr('value', data.functionIds.join(','));
+            }
+            initRoleTree();
+        });
+    }
+
+    /**
+     * 删除角色
+     * @param id
+     */
+    function delRole(id) {
+        $.messager.confirm('提示', '确定删除角色？', function(r) {
+            if(r) {
+                App.getRequestData('/api/core/role/delRole', {id: id, status: 0}, function(data){
+                    App.showMsg('删除成功');
+                    refreshSystemRole();
+                });
+            }
+        });
+    }
+
+</script>
+</body>
+</html>
