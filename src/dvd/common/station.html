@@ -7,38 +7,57 @@
 <body>
 <div class="super-theme-example">
     <div class="search-form-item col-md-4">
-        <label class="label-top">角色名称：</label>
-        <input name="roleName" class="easyui-validatebox easyui-textbox" prompt="请输入角色名称">
+        <label class="label-top">国家：</label>
+        <input name="countryId" class="easyui-validatebox easyui-textbox" prompt="请输入国家">
+    </div>
+
+    <div class="search-form-item col-md-4">
+        <label class="label-top">城市：</label>
+        <input name="cityId" class="easyui-validatebox easyui-textbox" prompt="请输入城市">
     </div>
 
     <div class="search-form-item col-md-3">
-        <a href="javascript:void(0)" onclick="refreshSystemRole()" class="easyui-linkbutton primary">查询</a>
-        <a href="javascript:void(0)" onclick="addSystemRole()" class="easyui-linkbutton primary">新增角色</a>
+        <a href="javascript:void(0)" onclick="refresh()" class="easyui-linkbutton primary">查询</a>
+        <a href="javascript:void(0)" onclick="add()" class="easyui-linkbutton primary">新增</a>
     </div>
 </div>
 
 <div class="clear"></div>
 <div class="super-theme-example">
     <div style="height: 400px;">
-        <table id="systemRoleTab"></table>
+        <table id="stationTab"></table>
     </div>
 
-    <div id="systemRoleWin" style="display: none;padding-top:30px;padding-left:100px;" title="新增角色">
-        <form id="systemRoleForm" method="post">
+    <div id="stationWin" style="display: none;padding-top:30px;padding-left:100px;" title="新增角色">
+        <form id="stationForm" method="post">
             <input name="id" type="hidden" />
             <div class="form-item col-md-10">
-                <label class="label-top">角色名称：</label>
-                <input id="systemRole_roleName" class="easyui-validatebox easyui-textbox" prompt="请输入角色名称" name="roleName" data-options="required:true, missingMessage:'请输入角色名称'">
+                <label class="label-top">国家：</label>
+                <input id="station_countryId" class="easyui-validatebox easyui-textbox" prompt="请输入国家" name="countryId" data-options="required:true, missingMessage:'请输入国家'">
             </div>
-            <div class="form-item col-md-10">
-                <label class="label-top" style="float:left;">绑定权限：</label>
 
-                <input role="tree_roleTree_input" data-type="tree-input" type="text" name="functionIds" value="" class="hide"/>
-                <ul id="tree_roleTree" class="ztree col-md-8"></ul>
+            <div class="form-item col-md-10">
+                <label class="label-top">城市：</label>
+                <input id="station_cityId" class="easyui-validatebox easyui-textbox" prompt="请输入城市" name="cityId" data-options="required:true, missingMessage:'请输入城市'">
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top">语言：</label>
+                <input id="station_language" class="easyui-validatebox easyui-textbox" prompt="请输入语言" name="language" data-options="required:true, missingMessage:'请输入语言'">
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top" style="float:left;">城市信息：</label>
+                <div class="cityInfo" style="float:left;"></div>
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top" style="float:left;">商务合作：</label>
+                <div class="businessCooperation" style="float:left;"></div>
             </div>
             <div class="form-item col-md-10">
-                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="roleInfoSave()">保存</a>
-                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="roleInfoCancel()">取消</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="save()">保存</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="cancel()">取消</a>
             </div>
         </form>
     </div>
@@ -47,8 +66,8 @@
 
 <script type="text/javascript">
     ;(function ($, window, document, undefined){
-        $('#systemRoleTab').datagrid({
-            url: App.href + '/api/core/role/list',
+        $('#stationTab').datagrid({
+            url: App.href + '/api/station/station/list',
             fit: true,
             pagination: true,
             fitColumns: true,
@@ -68,9 +87,11 @@
                 }
             },
             onBeforeLoad: function (param) {
-                var roleName = $("input[name=roleName]").val();
+                var countryId = $("input[name=countryId]").val();
+                var cityId = $("input[name=cityId]").val();
 
-                param.roleName = roleName;
+                param.countryId = countryId;
+                param.cityId = cityId;
             },
             columns: [
                 [{
@@ -79,12 +100,40 @@
                     sortable: true,
                     width: 50
                 }, {
-                    field: 'roleName',
-                    title: '角色名称',
+                    field: 'countryCnName',
+                    title: '国家中文名称',
+                    width: 50
+                }, {
+                    field: 'countryEnName',
+                    title: '国家英文名称',
+                    width: 50
+                }, {
+                    field: 'cityCnName',
+                    title: '城市（中文）',
+                    width: 50
+                }, {
+                    field: 'cityEnName',
+                    title: '城市（英文）',
+                    width: 50
+                }, {
+                    field: 'status',
+                    title: '状态',
+                    width: 50
+                }, {
+                    field: 'createUserName',
+                    title: '创建人',
                     width: 50
                 }, {
                     field: 'ctime',
                     title: '创建时间',
+                    width: 50
+                }, {
+                    field: 'updateUserName',
+                    title: '最后修改人',
+                    width: 50
+                }, {
+                    field: 'utime',
+                    title: '最后修改时间',
                     width: 50
                 }, {
                     field: 'custom_col1',
@@ -93,16 +142,22 @@
                     align: 'center',
                     formatter: function(value, row, index) {
                         var btns = new Array();
-                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateRole(' + row.id + ')">绑定权限</a>&nbsp;');
-                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="delRole(' + row.id + ')">删除</a>');
+
+                        if(row.status == 0) {
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateStatus(' + row.id + ', 1)">上线</a>&nbsp;');
+                        } else {
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateStatus(' + row.id + ', 0)">下线</a>&nbsp;');
+                        }
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="update(' + row.id + ')">修改</a>&nbsp;');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="del(' + row.id + ')">删除</a>');
                         return btns.join('');
                     }
                 }]
             ]
         });
 
-        $('#systemRoleForm').form({
-            url: App.href + '/api/core/role/saveRole',
+        $('#stationForm').form({
+            url: App.href + '/api/station/station/save',
             method: 'POST',
             onSubmit:function(){
                 return $(this).form('validate');
@@ -111,110 +166,104 @@
                 var obj = JSON.parse(data);
                 if (obj.code == 200) {
                     App.showMsg('保存成功');
-                    $('#systemRoleWin').window('close');
+                    $('#stationWin').window('close');
                 } else {
                     App.showMsg(obj.message);
                 }
-                refreshSystemRole();
+                refresh();
             }
+        });
+
+        $('.cityInfo').summernote({
+            height: 300,
+            tabsize: 2
+        });
+
+        $('.businessCooperation').summernote({
+            height: 300,
+            tabsize: 2
         });
 
     })(jQuery, window, document);
 
-    /**
-     * 初始化角色树
-     */
-    function initRoleTree() {
-        $.fn.zTree.init($("#tree_roleTree"), App.treeSetting({
-            url: App.href + "/api/core/function/treeNodes",
-            expandAll: true,
-            autoParam: ["id", "name", "pId"],
-            chkboxType: {"Y": "ps", "N": "ps"},
-            chkStyle: "checkbox"
-        }));
-    }
 
-
-    function refreshSystemRole() {
-        $('#systemRoleTab').datagrid('reload');
+    function refresh() {
+        $('#stationTab').datagrid('reload');
     }
 
     /**
-     * 添加公司角色
+     * 添加
      *
      */
-    function addSystemRole() {
-        $('#systemRoleWin').window({
+    function add() {
+        $('#stationWin').window({
             width: "80%",
             height: "80%",
             modal:true
         });
-        $('#systemRoleForm').form({'url': App.href + '/api/core/role/saveRole'});
-        $('#systemRoleWin').window({title: '新增角色'});
+        $('#stationForm').form({'url': App.href + '/api/station/station/save'});
+        $('#stationWin').window({title: '新增'});
         $("#systemRole_roleName").textbox('setValue', '');
-        $('#systemRoleForm').find('input[name=functionIds]').attr('value', '');
         $("#systemRoleForm").find("input[name=id]").val('');
-        initRoleTree();
     }
 
     /**
-     * 角色新增
+     * 保存
      */
-    function roleInfoSave() {
-        var functionIds = $('#systemRoleWin').find('input[name=functionIds]').val();
-
-        if(functionIds == '') {
-            App.showMsg('请选择绑定权限');
-            return false;
-        }
-
-        $('#systemRoleForm').submit();
+    function save() {
+        $('#stationForm').submit();
     }
 
     /**
      * 角色菜单关闭
      */
-    function roleInfoCancel() {
-        $('#systemRoleWin').window('close');
+    function cancel() {
+        $('#stationWin').window('close');
     }
 
     /**
-     * 更新角色
+     * 更新
      * @param id
      */
-    function updateRole(id) {
-        $('#systemRoleWin').window({
+    function update(id) {
+        $('#stationWin').window({
             width: "80%",
             height: "80%",
             modal:true
         });
 
-        App.getRequestData('/api/core/role/getRole', {'id': id}, function(data){
-            $('#systemRoleForm').form({'url': App.href + '/api/core/role/updateRole'});
-            $('#systemRoleWin').window({title: '更新角色'});
+        App.getRequestData('/api/station/station/get', {'id': id}, function(data){
+            $('#stationForm').form({'url': App.href + '/api/station/station/update'});
+            $('#stationWin').window({title: '更新'});
 
-            $("#systemRoleForm").find("input[name=id]").val(data.id);
+            $("#stationForm").find("input[name=id]").val(data.id);
             $("#systemRole_roleName").textbox('setValue', data.roleName);
-            if(data.functionIds && data.functionIds.length > 0) {
-                $('#systemRoleForm').find('input[name=functionIds]').attr('value', data.functionIds.join(','));
-            }
-            initRoleTree();
         });
     }
 
     /**
-     * 删除角色
+     * 删除
      * @param id
      */
-    function delRole(id) {
-        $.messager.confirm('提示', '确定删除角色？', function(r) {
+    function del(id) {
+        $.messager.confirm('提示', '确定删除？', function(r) {
             if(r) {
-                App.getRequestData('/api/core/role/delRole', {id: id, status: 0}, function(data){
+                App.getRequestData('/api/station/station/del', {id: id, status: 0}, function(data){
                     App.showMsg('删除成功');
-                    refreshSystemRole();
+                    refresh();
                 });
             }
         });
+    }
+
+    /**
+     * 更新状态
+     *
+     * @param id
+     * @param status
+     */
+    function updateStatus(id, status) {
+
     }
 
 </script>
