@@ -8,17 +8,17 @@
 <div class="super-theme-example">
     <div class="search-form-item col-md-4">
         <label class="label-top">国家：</label>
-        <input name="countryId" class="easyui-validatebox easyui-textbox" prompt="请输入国家">
+        <input id="search_countryId" name="countryId" class="easyui-combobox" prompt="请输入国家">
     </div>
 
     <div class="search-form-item col-md-4">
         <label class="label-top">城市：</label>
-        <input name="cityId" class="easyui-validatebox easyui-textbox" prompt="请输入城市">
+        <input id="search_cityId" name="cityId" class="easyui-combobox" prompt="请输入城市">
     </div>
 
     <div class="search-form-item col-md-3">
-        <a href="javascript:void(0)" onclick="refresh()" class="easyui-linkbutton primary">查询</a>
-        <a href="javascript:void(0)" onclick="add()" class="easyui-linkbutton primary">新增</a>
+        <a href="javascript:void(0)" onclick="refreshStation()" class="easyui-linkbutton primary">查询</a>
+        <a href="javascript:void(0)" onclick="addStation()" class="easyui-linkbutton primary">新增</a>
     </div>
 </div>
 
@@ -28,36 +28,57 @@
         <table id="stationTab"></table>
     </div>
 
-    <div id="stationWin" style="display: none;padding-top:30px;padding-left:100px;" title="新增角色">
+    <div id="stationWin" style="display: none;padding-top:30px;padding-left:100px;" title="新增">
         <form id="stationForm" method="post">
             <input name="id" type="hidden" />
             <div class="form-item col-md-10">
                 <label class="label-top">国家：</label>
-                <input id="station_countryId" class="easyui-validatebox easyui-textbox" prompt="请输入国家" name="countryId" data-options="required:true, missingMessage:'请输入国家'">
+                <input id="station_countryId" name="countryId" class="easyui-combobox" data-options="required:true, missingMessage:'请输入国家'">
             </div>
 
             <div class="form-item col-md-10">
                 <label class="label-top">城市：</label>
-                <input id="station_cityId" class="easyui-validatebox easyui-textbox" prompt="请输入城市" name="cityId" data-options="required:true, missingMessage:'请输入城市'">
+                <input id="station_cityId" name="cityId" class="easyui-combobox" data-options="required:true, missingMessage:'请输入城市'">
             </div>
 
             <div class="form-item col-md-10">
-                <label class="label-top">语言：</label>
-                <input id="station_language" class="easyui-validatebox easyui-textbox" prompt="请输入语言" name="language" data-options="required:true, missingMessage:'请输入语言'">
+                <label class="label-top">状态：</label>
+                <select id="station_status" class="easyui-combobox" data-options="editable:false,panelHeight:null" name="status">
+                    <option value="1" selected>上线</option>
+                    <option value="0">下线</option>
+                </select>
             </div>
 
             <div class="form-item col-md-10">
-                <label class="label-top" style="float:left;">城市信息：</label>
-                <div class="cityInfo" style="float:left;"></div>
+                <label class="label-top" style="float:left;">中文城市信息：</label>
+                <div class="cnCityInfo" style="float:left;"></div>
+
+                <input type="hidden" name="cnCityInfo" />
             </div>
 
             <div class="form-item col-md-10">
-                <label class="label-top" style="float:left;">商务合作：</label>
-                <div class="businessCooperation" style="float:left;"></div>
+                <label class="label-top" style="float:left;">英文城市信息：</label>
+                <div class="enCityInfo" style="float:left;"></div>
+
+                <input type="hidden" name="enCityInfo" />
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top" style="float:left;">中文商务合作：</label>
+                <div class="cnBusinessCooperation" style="float:left;"></div>
+
+                <input type="hidden" name="cnBusinessCooperation" />
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top" style="float:left;">英文商务合作：</label>
+                <div class="enBusinessCooperation" style="float:left;"></div>
+
+                <input type="hidden" name="enBusinessCooperation" />
             </div>
             <div class="form-item col-md-10">
-                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="save()">保存</a>
-                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="cancel()">取消</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="saveStation()">保存</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="cancelStation()">取消</a>
             </div>
         </form>
     </div>
@@ -118,7 +139,15 @@
                 }, {
                     field: 'status',
                     title: '状态',
-                    width: 50
+                    width: 50,
+                    formatter: function(value, row, index) {
+                        var statusStr = "上线";
+                        if(row.status == 0) {
+                            statusStr = "下线";
+                        }
+
+                        return statusStr;
+                    }
                 }, {
                     field: 'createUserName',
                     title: '创建人',
@@ -144,12 +173,12 @@
                         var btns = new Array();
 
                         if(row.status == 0) {
-                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateStatus(' + row.id + ', 1)">上线</a>&nbsp;');
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateStationStatus(' + row.id + ', 1)">上线</a>&nbsp;');
                         } else {
-                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateStatus(' + row.id + ', 0)">下线</a>&nbsp;');
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateStationStatus(' + row.id + ', 0)">下线</a>&nbsp;');
                         }
-                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="update(' + row.id + ')">修改</a>&nbsp;');
-                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="del(' + row.id + ')">删除</a>');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateStation(' + row.id + ')">修改</a>&nbsp;');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="delStation(' + row.id + ')">删除</a>');
                         return btns.join('');
                     }
                 }]
@@ -170,24 +199,83 @@
                 } else {
                     App.showMsg(obj.message);
                 }
-                refresh();
+                refreshStation();
             }
         });
 
-        $('.cityInfo').summernote({
+        $('.cnCityInfo').summernote({
             height: 300,
             tabsize: 2
         });
 
-        $('.businessCooperation').summernote({
+        $('.enCityInfo').summernote({
             height: 300,
             tabsize: 2
+        });
+
+        $('.cnBusinessCooperation').summernote({
+            height: 300,
+            tabsize: 2
+        });
+
+        $('.enBusinessCooperation').summernote({
+            height: 300,
+            tabsize: 2
+        });
+
+
+        // 获取国家信息
+        App.getRequestData("/api/common/country/options", {}, function(data) {
+            data.unshift({value:'', text:'请选择'});
+            $("#station_countryId").combobox({
+                valueField: 'value',
+                textField: 'text',
+                editable: false,
+                required: true,
+                mode: 'local',
+                value: '',
+                data: data
+            });
+
+            $("#search_countryId").combobox({
+                valueField: 'value',
+                textField: 'text',
+                editable: false,
+                required: true,
+                mode: 'local',
+                value: '',
+                data: data
+            });
+        });
+
+        //获取城市信息
+        App.getRequestData("/api/common/city/options", {}, function(data) {
+            data.unshift({value:'', text:'请选择'});
+            $("#station_cityId").combobox({
+                valueField: 'value',
+                textField: 'text',
+                editable: false,
+                required: true,
+                mode: 'local',
+                value: '',
+                data: data
+            });
+
+            $("#search_cityId").combobox({
+                valueField: 'value',
+                textField: 'text',
+                editable: false,
+                required: true,
+                mode: 'local',
+                value: '',
+                data: data
+            });
         });
 
     })(jQuery, window, document);
 
 
-    function refresh() {
+    function refreshStation() {
         $('#stationTab').datagrid('reload');
     }
 
@@ -195,7 +283,7 @@
      * 添加
      *
      */
-    function add() {
+    function addStation() {
         $('#stationWin').window({
             width: "80%",
             height: "80%",
@@ -203,21 +291,61 @@
         });
         $('#stationForm').form({'url': App.href + '/api/station/station/save'});
         $('#stationWin').window({title: '新增'});
-        $("#systemRole_roleName").textbox('setValue', '');
-        $("#systemRoleForm").find("input[name=id]").val('');
+
+        $("#station_countryId").combobox('setValue', '');
+        $("#station_cityId").combobox('setValue', '');
+        $("#station_status").combobox('setValue', '');
+
+        $('.cnCityInfo').summernote('code', '');
+        $('.cnBusinessCooperation').summernote('code', '');
+
+        $('.enCityInfo').summernote('code', '');
+        $('.enBusinessCooperation').summernote('code', '');
+
+
+        $("#stationForm").find("input[name=id]").val('');
     }
 
     /**
      * 保存
      */
-    function save() {
+    function saveStation() {
+        var cnCityInfo = $('.cnCityInfo').summernote('code');
+        if($.trim(cnCityInfo) == '') {
+            App.showMsg('请输入中文城市信息。');
+            return false;
+        }
+
+        $("#stationForm").find("input[name=cnCityInfo]").val(cnCityInfo);
+
+        var enCityInfo = $('.enCityInfo').summernote('code');
+        if($.trim(enCityInfo) == '') {
+            App.showMsg('请输入英文城市信息。');
+            return false;
+        }
+        $("#stationForm").find("input[name=enCityInfo]").val(enCityInfo);
+
+        var cnBusinessCooperation = $('.cnBusinessCooperation').summernote('code');
+        if($.trim(cnBusinessCooperation) == '') {
+            App.showMsg('请输入中文商务合作。');
+            return false;
+        }
+        $("#stationForm").find("input[name=cnBusinessCooperation]").val(cnBusinessCooperation);
+
+        var enBusinessCooperation = $('.enBusinessCooperation').summernote('code');
+        if($.trim(enBusinessCooperation) == '') {
+            App.showMsg('请输入英文商务合作。');
+            return false;
+        }
+        $("#stationForm").find("input[name=enBusinessCooperation]").val(enBusinessCooperation);
+
         $('#stationForm').submit();
     }
 
     /**
-     * 角色菜单关闭
+     * 关闭
      */
-    function cancel() {
+    function cancelStation() {
         $('#stationWin').window('close');
     }
 
@@ -225,7 +353,7 @@
      * 更新
      * @param id
      */
-    function update(id) {
+    function updateStation(id) {
         $('#stationWin').window({
             width: "80%",
             height: "80%",
@@ -236,8 +364,19 @@
             $('#stationForm').form({'url': App.href + '/api/station/station/update'});
             $('#stationWin').window({title: '更新'});
 
+
+            $("#station_countryId").combobox('setValue', data.countryId);
+            $("#station_cityId").combobox('setValue', data.cityId);
+            $("#station_status").combobox('setValue', data.status);
+
+            $('.cnCityInfo').summernote('code', data.cnCityInfo);
+            $('.enCityInfo').summernote('code', data.enCityInfo);
+
+            $('.cnBusinessCooperation').summernote('code', data.cnBusinessCooperation);
+            $('.enBusinessCooperation').summernote('code', data.enBusinessCooperation);
+
+
             $("#stationForm").find("input[name=id]").val(data.id);
-            $("#systemRole_roleName").textbox('setValue', data.roleName);
         });
     }
 
@@ -245,12 +384,12 @@
      * 删除
      * @param id
      */
-    function del(id) {
+    function delStation(id) {
         $.messager.confirm('提示', '确定删除？', function(r) {
             if(r) {
-                App.getRequestData('/api/station/station/del', {id: id, status: 0}, function(data){
+                App.getRequestData('/api/station/station/delete', {'id': id}, function(data){
                     App.showMsg('删除成功');
-                    refresh();
+                    refreshStation();
                 });
             }
         });
@@ -262,8 +401,12 @@
      * @param id
      * @param status
      */
-    function updateStatus(id, status) {
+    function updateStationStatus(id, status) {
+        App.getRequestData('/api/station/station/updateStatus', {'id': id, 'status': status}, function(data){
 
+            App.showMsg('状态修改成功');
+            refreshStation();
+        });
     }
 
 </script>

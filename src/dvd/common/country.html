@@ -20,8 +20,8 @@
     </div>
 
     <div class="search-form-item col-md-3">
-        <a href="javascript:void(0)" onclick="refresh()" class="easyui-linkbutton primary">查询</a>
-        <a href="javascript:void(0)" onclick="add()" class="easyui-linkbutton primary">新增</a>
+        <a href="javascript:void(0)" onclick="refreshCountry()" class="easyui-linkbutton primary">查询</a>
+        <a href="javascript:void(0)" onclick="addCountry()" class="easyui-linkbutton primary">新增</a>
     </div>
 </div>
 
@@ -47,8 +47,8 @@
                 <input id="country_code" class="easyui-validatebox easyui-textbox" prompt="请输入国家代码值" name="code" data-options="required:true, missingMessage:'请输入国家代码值'">
             </div>
             <div class="form-item col-md-10">
-                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="save()">保存</a>
-                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="cancel()">取消</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="saveCountry()">保存</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="cancelCountry()">取消</a>
             </div>
         </form>
     </div>
@@ -127,8 +127,8 @@
                     align: 'center',
                     formatter: function(value, row, index) {
                         var btns = new Array();
-                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="update(' + row.id + ')">修改</a>&nbsp;');
-                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="del(' + row.id + ')">删除</a>');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateCountry(' + row.id + ')">修改</a>&nbsp;');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="delCountry(' + row.id + ')">删除</a>');
                         return btns.join('');
                     }
                 }]
@@ -149,14 +149,14 @@
                 } else {
                     App.showMsg(obj.message);
                 }
-                refresh();
+                refreshCountry();
             }
         });
 
     })(jQuery, window, document);
 
 
-    function refresh() {
+    function refreshCountry() {
         $('#countryTab').datagrid('reload');
     }
 
@@ -164,7 +164,7 @@
      * 添加
      *
      */
-    function add() {
+    function addCountry() {
         $('#countryWin').window({
             width: "80%",
             height: "80%",
@@ -172,23 +172,25 @@
         });
         $('#countryForm').form({'url': App.href + '/api/common/country/save'});
         $('#countryWin').window({title: '新增'});
-        $("#country_roleName").textbox('setValue', '');
-        $('#countryForm').find('input[name=functionIds]').attr('value', '');
+
         $("#countryForm").find("input[name=id]").val('');
+
+        $("#country_countryCnName").textbox('setValue', '');
+        $("#country_countryEnName").textbox('setValue', '');
+        $("#country_code").textbox('setValue', '');
     }
 
     /**
      * 新增
      */
-    function save() {
-
+    function saveCountry() {
         $('#countryForm').submit();
     }
 
     /**
      * 关闭弹框
      */
-    function cancel() {
+    function cancelCountry() {
         $('#countryWin').window('close');
     }
 
@@ -196,7 +198,7 @@
      * 更新
      * @param id
      */
-    function update(id) {
+    function updateCountry(id) {
         $('#countryWin').window({
             width: "80%",
             height: "80%",
@@ -208,7 +210,9 @@
             $('#countryWin').window({title: '更新'});
 
             $("#countryForm").find("input[name=id]").val(data.id);
-            $("#country_roleName").textbox('setValue', data.roleName);
+            $("#country_countryCnName").textbox('setValue', data.countryCnName);
+            $("#country_countryEnName").textbox('setValue', data.countryEnName);
+            $("#country_code").textbox('setValue', data.code);
         });
     }
 
@@ -216,12 +220,12 @@
      * 删除
      * @param id
      */
-    function del(id) {
-        $.messager.confirm('提示', '确定删除国家？', function(r) {
+    function delCountry(id) {
+        $.messager.confirm('提示', '确定删除？', function(r) {
             if(r) {
-                App.getRequestData('/api/common/country/del', {id: id, status: 0}, function(data){
+                App.getRequestData('/api/common/country/delete', {id: id}, function(data){
                     App.showMsg('删除成功');
-                    refresh();
+                    refreshCountry();
                 });
             }
         });

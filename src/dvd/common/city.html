@@ -40,8 +40,8 @@
     </div>
 
     <div class="search-form-item col-md-3">
-        <a href="javascript:void(0)" onclick="refresh()" class="easyui-linkbutton primary">查询</a>
-        <a href="javascript:void(0)" onclick="add()" class="easyui-linkbutton primary">新增</a>
+        <a href="javascript:void(0)" onclick="refreshCity()" class="easyui-linkbutton primary">查询</a>
+        <a href="javascript:void(0)" onclick="addCity()" class="easyui-linkbutton primary">新增</a>
     </div>
 </div>
 
@@ -56,8 +56,9 @@
             <input name="id" type="hidden" />
             <div class="form-item col-md-10">
                 <label class="label-top">国家：</label>
-                <input id="city_countryId" class="easyui-validatebox easyui-textbox" prompt="请输入国家" name="countryId" data-options="required:true, missingMessage:'请输入国家'">
+                <input id="city_countryId" name="countryId" class="easyui-combobox" data-options="required:true, missingMessage:'请输入国家'">
             </div>
+
             <div class="form-item col-md-10">
                 <label class="label-top">城市中文名称：</label>
                 <input id="city_cityCn" class="easyui-validatebox easyui-textbox" prompt="请输入城市中文名称" name="cityCn" data-options="required:true, missingMessage:'请输入城市中文名称'">
@@ -79,8 +80,8 @@
                 <input id="city_email" class="easyui-validatebox easyui-textbox" prompt="请输入email" name="email" data-options="required:true, missingMessage:'请输入email'">
             </div>
             <div class="form-item col-md-10">
-                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="save()">保存</a>
-                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="cancel()">取消</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="saveCity()">保存</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="cancelCity()">取消</a>
             </div>
         </form>
     </div>
@@ -189,8 +190,8 @@
                     align: 'center',
                     formatter: function(value, row, index) {
                         var btns = new Array();
-                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="update(' + row.id + ')">修改</a>&nbsp;');
-                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="del(' + row.id + ')">删除</a>');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateCity(' + row.id + ')">修改</a>&nbsp;');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="delCity(' + row.id + ')">删除</a>');
                         return btns.join('');
                     }
                 }]
@@ -211,14 +212,28 @@
                 } else {
                     App.showMsg(obj.message);
                 }
-                refresh();
+                refreshCity();
             }
+        });
+
+        // 获取国家信息
+        App.getRequestData("/api/common/country/options", {}, function(data) {
+            data.unshift({value:'', text:'请选择'});
+            $("#city_countryId").combobox({
+                valueField: 'value',
+                textField: 'text',
+                editable: false,
+                required: true,
+                mode: 'local',
+                value: '',
+                data: data
+            });
         });
 
     })(jQuery, window, document);
 
 
-    function refresh() {
+    function refreshCity() {
         $('#cityTab').datagrid('reload');
     }
 
@@ -226,21 +241,28 @@
      * 添加
      *
      */
-    function add() {
+    function addCity() {
         $('#cityWin').window({
             width: "80%",
             height: "80%",
             modal:true
         });
-        $('#cityForm').form({'url': App.href + '/api/common/country/save'});
+        $('#cityForm').form({'url': App.href + '/api/common/city/save'});
         $('#cityWin').window({title: '新增'});
+
         $("#cityForm").find("input[name=id]").val('');
+        $("#city_countryId").combobox('setValue', '');
+        $("#city_cityCn").textbox('setValue', '');
+        $("#city_cityEn").textbox('setValue', '');
+        $("#city_code").textbox('setValue', '');
+        $("#city_contact").textbox('setValue', '');
+        $("#city_email").textbox('setValue', '');
     }
 
     /**
      * 新增
      */
-    function save() {
+    function saveCity() {
 
         $('#cityForm').submit();
     }
@@ -248,7 +270,7 @@
     /**
      * 关闭弹框
      */
-    function cancel() {
+    function cancelCity() {
         $('#cityWin').window('close');
     }
 
@@ -256,7 +278,7 @@
      * 更新
      * @param id
      */
-    function update(id) {
+    function updateCity(id) {
         $('#cityWin').window({
             width: "80%",
             height: "80%",
@@ -268,6 +290,12 @@
             $('#cityWin').window({title: '更新'});
 
             $("#cityForm").find("input[name=id]").val(data.id);
+            $("#city_countryId").combobox('setValue', data.countryId);
+            $("#city_cityCn").textbox('setValue', data.cityCn);
+            $("#city_cityEn").textbox('setValue', data.cityEn);
+            $("#city_code").textbox('setValue', data.code);
+            $("#city_contact").textbox('setValue', data.contact);
+            $("#city_email").textbox('setValue', data.email);
         });
     }
 
@@ -275,12 +303,12 @@
      * 删除
      * @param id
      */
-    function del(id) {
-        $.messager.confirm('提示', '确定删除城市？', function(r) {
+    function delCity(id) {
+        $.messager.confirm('提示', '确定删除？', function(r) {
             if(r) {
-                App.getRequestData('/api/common/city/del', {id: id, status: 0}, function(data){
+                App.getRequestData('/api/common/city/delete', {id: id}, function(data){
                     App.showMsg('删除成功');
-                    refresh();
+                    refreshCity();
                 });
             }
         });

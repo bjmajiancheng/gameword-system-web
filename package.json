@@ -1,7 +1,7 @@
 {
-  "name": "coolplay-company-web",
+  "name": "gameword-system-web",
   "version": "1.1.0",
-  "description": "coolplay-company-web",
+  "description": "gameword-system-web",
   "main": "index.js",
   "license": "ISC",
   "devDependencies": {
