@@ -223,7 +223,12 @@
             tabsize: 2
         });
 
+        stationRefreshOptions();
 
+    })(jQuery, window, document);
+
+    //刷新Options
+    function stationRefreshOptions() {
         // 获取国家信息
         App.getRequestData("/api/common/country/options", {}, function(data) {
             data.unshift({value:'', text:'请选择'});
@@ -248,6 +253,7 @@
             });
         });
 
+
         //获取城市信息
         App.getRequestData("/api/common/city/options", {}, function(data) {
             data.unshift({value:'', text:'请选择'});
@@ -271,8 +277,7 @@
                 data: data
             });
         });
-
-    })(jQuery, window, document);
+    }
 
 
     function refreshStation() {
@@ -284,6 +289,8 @@
      *
      */
     function addStation() {
+        stationRefreshOptions();
+
         $('#stationWin').window({
             width: "80%",
             height: "80%",
@@ -359,6 +366,8 @@
             height: "80%",
             modal:true
         });
+
+        stationRefreshOptions();
 
         App.getRequestData('/api/station/station/get', {'id': id}, function(data){
             $('#stationForm').form({'url': App.href + '/api/station/station/update'});

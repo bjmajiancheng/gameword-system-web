@@ -216,6 +216,16 @@
             }
         });
 
+
+
+    })(jQuery, window, document);
+
+
+    function refreshCity() {
+        $('#cityTab').datagrid('reload');
+    }
+
+    function refreshOptions() {
         // 获取国家信息
         App.getRequestData("/api/common/country/options", {}, function(data) {
             data.unshift({value:'', text:'请选择'});
@@ -229,12 +239,6 @@
                 data: data
             });
         });
-
-    })(jQuery, window, document);
-
-
-    function refreshCity() {
-        $('#cityTab').datagrid('reload');
     }
 
     /**
@@ -247,6 +251,9 @@
             height: "80%",
             modal:true
         });
+
+        refreshOptions();
+
         $('#cityForm').form({'url': App.href + '/api/common/city/save'});
         $('#cityWin').window({title: '新增'});
 
@@ -284,6 +291,8 @@
             height: "80%",
             modal:true
         });
+
+        refreshOptions();
 
         App.getRequestData('/api/common/city/get', {'id': id}, function(data){
             $('#cityForm').form({'url': App.href + '/api/common/city/update'});
