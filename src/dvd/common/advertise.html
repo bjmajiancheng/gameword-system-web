@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>开屏页管理</title>
+</head>
+<body>
+<div class="super-theme-example">
+    <div class="search-form-item col-md-4">
+        <label class="label-top">平台（1：Android 2：iOS）：</label>
+        <input id="search_platform" name="platform" class="easyui-combobox" prompt="请选择平台"
+               data-options="
+                valueField: 'label',
+                textField: 'value',
+                data: [{
+                    label: '1',
+                    value: 'Android'
+                },{
+                    label: '2',
+                    value: 'IOS'
+                }]" />
+    </div>
+
+    <div class="search-form-item col-md-3">
+        <a href="javascript:void(0)" onclick="refreshAdvertisement()" class="easyui-linkbutton primary">查询</a>
+        <a href="javascript:void(0)" onclick="addAdvertise()" class="easyui-linkbutton primary">新增</a>
+    </div>
+</div>
+
+<div class="clear"></div>
+<div class="super-theme-example">
+    <div style="height: 400px;">
+        <table id="advertiseTab"></table>
+    </div>
+
+    <div id="advertiseWin" style="display: none;padding-top:30px;padding-left:100px;" title="新增">
+        <form id="advertiseForm" method="post">
+            <input name="id" type="hidden" />
+            <div class="form-item col-md-10">
+                <label class="label-top">平台：</label>
+                <input id="advertise_platform" name="platform" class="easyui-combobox" data-options="required:true, missingMessage:'请输入国家'">
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top">开屏图片：</label>
+                <input id="advertise_image" name="advertiseImage" class="easyui-validatebox easyui-textbox" prompt="请输入开屏图片路径名称" data-options="required:true, missingMessage:'请输入开屏图片路径名称'">
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top">链接：</label>
+                <input id="advertise_link" name="advertiseLink" class="easyui-validatebox easyui-textbox" prompt="请输入开屏页跳转链接" data-options="required:true, missingMessage:'请输入开屏页跳转链接'">
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top">状态：</label>
+                <select id="advertise_status" class="easyui-combobox" data-options="editable:false,panelHeight:null" name="status">
+                    <option value="1" selected>上线</option>
+                    <option value="0">下线</option>
+                </select>
+            </div>
+
+
+            <div class="form-item col-md-10">
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="saveAdvertise()">保存</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="cancelAdvertise()">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    ;(function ($, window, document, undefined){
+        $('#advertiseTab').datagrid({
+            url: App.href + '/api/advertise/list',
+            fit: true,
+            pagination: true,
+            fitColumns: true,
+            method: 'GET',
+            pageSize: 10,
+            pageList: [10, 25, 50, 100, 200],
+            height: 400,
+            queryParams: {},
+            toolbar: [],
+            loadFilter: function(data) {
+                if (data.code === 401) {
+                    App.showMsg('token失效,请登录!');
+                    window.location.href = App.href + '/login.html';
+                    return {"total":0, "rows": "[]"};
+                } else {
+                    return data;
+                }
+            },
+            onBeforeLoad: function (param) {
+                var platform = $("input[name=platform]").val();
+
+                param.platform = platform;
+            },
+            columns: [
+                [{
+                    field: 'id',
+                    title: '序号',
+                    sortable: true,
+                    width: 50
+                }, {
+                    field: 'platform',
+                    title: '平台',
+                    width: 50,
+                    formatter: function (value, row, index) {
+                        var platStr="Android";
+                        if(row.platform == 1){
+                            platStr = "Android";
+                        }else if(row.platform == 2){
+                            platStr = "IOS";
+                        }
+
+                        return platStr;
+                    }
+                }, {
+                    field: 'image',
+                    title: '开屏图片',
+                    width: 50
+                }, {
+                    field: 'link',
+                    title: '链接',
+                    width: 50
+                }, {
+                    field: 'status',
+                    title: '状态',
+                    width: 50,
+                    formatter: function(value, row, index) {
+                        var statusStr = "上线";
+                        if(row.status == 0) {
+                            statusStr = "下线";
+                        }
+
+                        return statusStr;
+                    }
+                }, {
+                    field: 'user_id',
+                    title: '创建人',
+                    width: 50
+                }, {
+                    field: 'c_time',
+                    title: '创建时间',
+                    width: 50
+                }, {
+                    field: 'u_time',
+                    title: '最后修改时间',
+                    width: 50
+                }, {
+                    field: 'custom_col1',
+                    title: '操作',
+                    width: 50,
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var btns = new Array();
+
+                        if(row.status == 0) {
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateAdvertiseStatus(' + row.id + ', 1)">上线</a>&nbsp;');
+                        } else {
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateAdvertiseStatus(' + row.id + ', 0)">下线</a>&nbsp;');
+                        }
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateAdvertise(' + row.id + ')">修改</a>&nbsp;');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="delAdvertise(' + row.id + ')">删除</a>');
+                        return btns.join('');
+                    }
+                }]
+            ]
+        });
+
+        $('#advertiseForm').form({
+            url: App.href + '/api/advertise/save',
+            method: 'POST',
+            onSubmit:function(){
+                return $(this).form('validate');
+            },
+            success:function(data){
+                var obj = JSON.parse(data);
+                if (obj.code == 200) {
+                    App.showMsg('保存成功');
+                    $('#advertiseWin').window('close');
+                } else {
+                    App.showMsg(obj.message);
+                }
+                refreshAdvertisement();
+            }
+        });
+
+        advertiseRefreshOptions();
+
+    })(jQuery, window, document);
+
+    //刷新Options
+    function advertiseRefreshOptions() {
+        $("#advertise_platform").combobox({
+            editable: false,
+            required: true,
+            mode: 'local',
+            value: '',
+            valueField: 'label',
+            textField: 'value',
+            data: [{
+                label: '1',
+                value: 'Android'
+            },{
+                label: '2',
+                value: 'IOS'
+            }]
+        });
+        // 获取国家信息
+        // App.getRequestData("/api/common/country/options", {}, function(data) {
+        //     data.unshift({value:'', text:'请选择'});
+        //     $("#advertise_platform").combobox({
+        //         valueField: 'value',
+        //         textField: 'text',
+        //         editable: false,
+        //         required: true,
+        //         mode: 'local',
+        //         value: '',
+        //         data: data
+        //     });
+        //
+        //     $("#search_platform").combobox({
+        //         valueField: 'value',
+        //         textField: 'text',
+        //         editable: false,
+        //         required: true,
+        //         mode: 'local',
+        //         value: '',
+        //         data: data
+        //     });
+        // });
+
+    }
+
+
+    function refreshAdvertisement() {
+        $('#advertiseTab').datagrid('reload');
+    }
+
+    /**
+     * 添加
+     *
+     */
+    function addAdvertise() {
+
+        $('#advertiseWin').window({
+            width: "80%",
+            height: "80%",
+            modal:true
+        });
+        $('#advertiseForm').form({'url': App.href + '/api/advertise/save'});
+        $('#advertiseWin').window({title: '新增'});
+
+        $("#advertise_platform").combobox('setValue', '');
+        $("#advertise_image").textbox('setValue', '');
+        $("#advertise_status").textbox('setValue', '');
+
+        $("#advertiseForm").find("input[name=id]").val('');
+    }
+
+    /**
+     * 保存
+     */
+    function saveAdvertise() {
+        $('#advertiseForm').submit();
+    }
+
+    /**
+     * 关闭
+     */
+    function cancelAdvertise() {
+        $('#advertiseWin').window('close');
+    }
+
+    /**
+     * 更新
+     * @param id
+     */
+    function updateAdvertise(id) {
+        $('#advertiseWin').window({
+            width: "80%",
+            height: "80%",
+            modal:true
+        });
+
+        App.getRequestData('/api/advertise/get', {'id': id}, function(data){
+            $('#advertiseForm').form({'url': App.href + '/api/advertise/update'});
+            $('#advertiseWin').window({title: '更新'});
+
+
+            $("#advertise_platform").combobox('setValue', data.platform);
+            $("#advertise_image").textbox('setValue', data.image);
+            $("#advertise_link").textbox('setValue', data.link);
+            $("#advertise_status").combobox('setValue', data.status);
+
+            $("#advertiseForm").find("input[name=id]").val(data.id);
+        });
+    }
+
+    /**
+     * 删除
+     * @param id
+     */
+    function delAdvertise(id) {
+        $.messager.confirm('提示', '确定删除？', function(r) {
+            if(r) {
+                App.getRequestData('/api/advertise/delete', {'id': id}, function(data){
+                    App.showMsg('删除成功');
+                    refreshAdvertisement();
+                });
+            }
+        });
+    }
+
+    /**
+     * 更新状态
+     *
+     * @param id
+     * @param status
+     */
+    function updateAdvertiseStatus(id, status) {
+        App.getRequestData('/api/advertise/updateStatus', {'id': id, 'status': status}, function(data){
+
+            App.showMsg('状态修改成功');
+            refreshAdvertisement();
+        });
+    }
+
+</script>
+</body>
+</html>
