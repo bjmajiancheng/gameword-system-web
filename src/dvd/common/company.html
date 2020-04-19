@@ -55,15 +55,21 @@
 
             <div class="form-item col-md-10">
                 <label class="label-top">中文标签：</label>
-                <input id="company_cnLabelId" name="cnLabelId" class="easyui-combobox" data-options="required:true, missingMessage:'请输入中文标签'">
+
+                <input id="company_cnLabelId" name="cnLabelIds" class="easyui-validatebox easyui-combobox" data-options="required:true, missingMessage:'请输入中文标签'">
             </div>
+
             <div class="form-item col-md-10">
                 <label class="label-top">英文标签：</label>
-                <input id="company_enLabelId" class="easyui-validatebox easyui-textbox" prompt="请输入英文标签" name="enLabelId" data-options="required:true, missingMessage:'请输入英文标签'">
+                <input id="company_enLabelId" name="cnLabelIds" class="easyui-validatebox easyui-combobox" data-options="required:true, missingMessage:'请输入英文标签'">
             </div>
-            <div class="form-item col-md-10">
-                <label class="label-top">企业LOGO：</label>
 
+            <div class="form-item col-md-10">
+                <label class="label-top" style="float:left;">企业LOGO：</label>
+
+                <div id="companyLogoDiv" style="float:left;">
+
+                </div>
             </div>
             <div class="form-item col-md-10">
                 <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="saveCompany()">保存</a>
@@ -126,7 +132,10 @@
                 }, {
                     field: 'companyLogo',
                     title: '企业LOGO',
-                    width: 50
+                    width: 50,
+                    formatter: function(value, row, index) {
+                        return '<img src="' + App.href + row.companyLogo +'" width="100px" height="100px"/>';
+                    }
                 }, {
                     field: 'ctime',
                     title: '创建时间',
@@ -166,6 +175,20 @@
 
         companyRefreshOptions();
 
+        $('.company_cnDescNote').summernote({
+            height: 300,
+            tabsize: 2
+        });
+
+        $('.company_enDescNote').summernote({
+            height: 300,
+            tabsize: 2
+        });
+
+        $('#companyLogoDiv').html('');
+        var companyLogoEle = App.uploadImage({id: "companyLogo", name: 'companyLogo', isAjaxUpload: true, autoUpload: true});
+        $('#companyLogoDiv').append(companyLogoEle);
+
     })(jQuery, window, document);
 
 
@@ -197,6 +220,35 @@
                 data: data
             });
         });
+
+        //中文
+        App.getRequestData("/api/common/label/options", {"language": 1}, function(data) {
+            $("#company_cnLabelId").combobox({
+                valueField: 'value',
+                textField: 'text',
+                editable: false,
+                required: true,
+                mode: 'local',
+                value: '',
+                multiple:true,
+                data: data
+            });
+        });
+
+        //英文
+        App.getRequestData("/api/common/label/options", {"language": 2}, function(data) {
+            $("#company_enLabelId").combobox({
+                valueField: 'value',
+                textField: 'text',
+                editable: false,
+                required: true,
+                mode: 'local',
+                value: '',
+                multiple:true,
+                data: data
+            });
+        });
+
     }
 
     /**
@@ -221,9 +273,10 @@
         $("#company_cnName").textbox('setValue', '');
         $("#company_enName").textbox('setValue', '');
 
+        App.showImage("companyLogoDiv", '');
+
         $('.company_cnDescNote').summernote('code', '');
         $('.company_enDescNote').summernote('code', '');
-
 
         $("#company_cnLabelId").combobox('setValue', '');
         $("#company_enLabelId").combobox('setValue', '');
@@ -233,6 +286,28 @@
      * 新增
      */
     function saveCompany() {
+        var cnDesc = $('.company_cnDescNote').summernote('code');
+        if(cnDesc == '' || $.trim(cnDesc) == '') {
+            App.showMsg('请输入中文简介。');
+            return false;
+        }
+
+        $('#company_cnDesc').val(cnDesc);
+
+        var enDesc = $('.company_enDescNote').summernote('code');
+        if(enDesc == '' || $.trim(enDesc) == '') {
+            App.showMsg('请输入英文简介。');
+            return false;
+        }
+
+        $('#company_enDesc').val(enDesc);
+
+        var companyLogo = $("input[name=companyLogo]").val();
+        if(companyLogo == undefined || companyLogo == '') {
+            App.showMsg("请上传企业LOGO图片");
+            return false;
+        }
+
         $('#companyForm').submit();
     }
 
@@ -269,9 +344,11 @@
             $('.company_cnDescNote').summernote('code', data.cnDesc);
             $('.company_enDescNote').summernote('code', data.enDesc);
 
+            $("#companyLogo").attr('value', data.companyLogo);
+            App.showImage("companyLogoDiv", data.companyLogo);
 
-            $("#company_cnLabelId").combobox('setValue', data.cnLabelId);
-            $("#company_enLabelId").combobox('setValue', data.enLabelId);
+            $("#company_cnLabelId").combobox('setValue', data.cnLabelIds);
+            $("#company_enLabelId").combobox('setValue', data.enLabelIds);
         });
     }
 
