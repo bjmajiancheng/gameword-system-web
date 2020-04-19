@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>反馈管理</title>
+</head>
+<body>
+<div class="super-theme-example">
+    <div class="search-form-item col-md-4">
+        <label class="label-top">用户ID：</label>
+        <input name="userId" class="easyui-validatebox easyui-textbox" prompt="请输入用户ID">
+    </div>
+    <div class="search-form-item col-md-4">
+        <label class="label-top">状态：</label>
+        <select class="easyui-combobox" data-options="editable:false,panelHeight:null" name="status">
+            <option value="">请选择</option>
+            <option value="0">待处理</option>
+            <option value="1">已处理</option>
+        </select>
+    </div>
+
+    <div class="search-form-item col-md-3">
+        <a href="javascript:void(0)" onclick="refreshFeedback()" class="easyui-linkbutton primary">查询</a>
+    </div>
+</div>
+
+<div class="clear"></div>
+<div class="super-theme-example">
+    <div style="height: 400px;">
+        <table id="feedbackTab"></table>
+    </div>
+
+    <div id="feedbackWin" style="display: none;padding-top:30px;padding-left:100px;" title="修改">
+        <form id="feedbackForm" method="post">
+            <input name="id" type="hidden" />
+            <div class="form-item col-md-10">
+                <label class="label-top">用户ID：</label>
+                <input id="feedback_userId" class="easyui-validatebox easyui-textbox" prompt="请输入用户ID" name="userId" data-options="required:true, missingMessage:'请输入用户ID'">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top">反馈内容：</label>
+                <input id="feedback_content" class="easyui-validatebox easyui-textbox" prompt="请输入反馈内容" name="content" data-options="required:true, missingMessage:'请输入反馈内容'">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top">状态：</label>
+                <select id="feedback_status" class="easyui-combobox" data-options="editable:false,panelHeight:null" name="status">
+                    <option value="0" selected>待处理</option>
+                    <option value="1">已处理</option>
+                </select>
+            </div>
+            <div class="form-item col-md-10">
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="saveFeedback()">保存</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="cancelFeedback()">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    ;(function ($, window, document, undefined){
+        $('#feedbackTab').datagrid({
+            url: App.href + '/api/common/feedback/list',
+            fit: true,
+            pagination: true,
+            fitColumns: true,
+            method: 'GET',
+            pageSize: 10,
+            pageList: [10, 25, 50, 100, 200],
+            height: 400,
+            queryParams: {},
+            toolbar: [],
+            loadFilter: function(data) {
+                if (data.code === 401) {
+                    App.showMsg('token失效,请登录!');
+                    window.location.href = App.href + '/login.html';
+                    return {"total":0, "rows": "[]"};
+                } else {
+                    return data;
+                }
+            },
+            onBeforeLoad: function (param) {
+                var userId = $("input[name=userId]").val();
+                var status = $("input[name=status]").val();
+
+                param.userId = userId;
+                param.status = status;
+            },
+            columns: [
+                [{
+                    field: 'id',
+                    title: '序号',
+                    sortable: true,
+                    width: 50
+                }, {
+                    field: 'userId',
+                    title: '用户ID',
+                    width: 50
+                }, {
+                    field: 'content',
+                    title: '反馈内容',
+                    width: 50
+                }, {
+                    field: 'status',
+                    title: '状态',
+                    width: 50,
+                    formatter: function(value, row, index) {
+                        var statusStr = "待处理";
+                        if(row.status == 1) {
+                            statusStr = "已处理";
+                        }
+
+                        return statusStr;
+                    }
+                }, {
+                    field: 'ctime',
+                    title: '创建时间',
+                    width: 50
+                }, {
+                    field: 'custom_col1',
+                    title: '操作',
+                    width: 50,
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var btns = new Array();
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateFeedback(' + row.id + ')">修改</a>&nbsp;');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="delFeedback(' + row.id + ')">删除</a>');
+                        return btns.join('');
+                    }
+                }]
+            ]
+        });
+
+        $('#feedbackForm').form({
+            url: App.href + '/api/common/feedback/save',
+            method: 'POST',
+            onSubmit:function(){
+                return $(this).form('validate');
+            },
+            success:function(data){
+                var obj = JSON.parse(data);
+                if (obj.code == 200) {
+                    App.showMsg('保存成功');
+                    $('#feedbackWin').window('close');
+                } else {
+                    App.showMsg(obj.message);
+                }
+                refreshFeedback();
+            }
+        });
+
+    })(jQuery, window, document);
+
+
+    function refreshFeedback() {
+        $('#feedbackTab').datagrid('reload');
+    }
+
+    /**
+     * 新增
+     */
+    function saveFeedback() {
+        $('#feedbackForm').submit();
+    }
+
+    /**
+     * 关闭弹框
+     */
+    function cancelFeedback() {
+        $('#feedbackWin').window('close');
+    }
+
+    /**
+     * 更新
+     * @param id
+     */
+    function updateFeedback(id) {
+        $('#feedbackWin').window({
+            width: "80%",
+            height: "80%",
+            modal:true
+        });
+
+        App.getRequestData('/api/common/feedback/get', {'id': id}, function(data){
+            $('#feedbackForm').form({'url': App.href + '/api/common/feedback/update'});
+            $('#feedbackWin').window({title: '更新'});
+
+            $("#feedbackForm").find("input[name=id]").val(data.id);
+            $("#feedback_userId").textbox('setValue', data.userId);
+            $("#feedback_content").textbox('setValue', data.content);
+            $("#feedback_status").combobox('setValue', data.status);
+        });
+    }
+
+    /**
+     * 删除
+     * @param id
+     */
+    function delFeedback(id) {
+        $.messager.confirm('提示', '确定删除？', function(r) {
+            if(r) {
+                App.getRequestData('/api/common/feedback/delete', {id: id}, function(data){
+                    App.showMsg('删除成功');
+                    refreshFeedback();
+                });
+            }
+        });
+    }
+
+</script>
+
+</body>
+</html>

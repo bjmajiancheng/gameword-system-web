@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>企业管理</title>
+</head>
+<body>
+<div class="super-theme-example">
+    <div class="search-form-item col-md-4">
+        <label class="label-top">城市：</label>
+        <input id="company_searchCityId" name="cityId" class="easyui-combobox" data-options="required:true, missingMessage:'请输入城市'">
+    </div>
+
+    <div class="search-form-item col-md-3">
+        <a href="javascript:void(0)" onclick="refreshCompany()" class="easyui-linkbutton primary">查询</a>
+        <a href="javascript:void(0)" onclick="addCompany()" class="easyui-linkbutton primary">新增</a>
+    </div>
+</div>
+
+<div class="clear"></div>
+<div class="super-theme-example">
+    <div style="height: 400px;">
+        <table id="companyTab"></table>
+    </div>
+
+    <div id="companyWin" style="display: none;padding-top:30px;padding-left:100px;" title="新增">
+        <form id="companyForm" method="post">
+            <input name="id" type="hidden" />
+            <div class="form-item col-md-10">
+                <label class="label-top">城市：</label>
+                <input id="company_cityId" name="cityId" class="easyui-combobox" data-options="required:true, missingMessage:'请输入城市'">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top">企业中文名称：</label>
+                <input id="company_cnName" class="easyui-validatebox easyui-textbox" prompt="请输入企业中文名称" name="cnName" data-options="required:true, missingMessage:'请输入企业中文名称'">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top">企业英文名称：</label>
+                <input id="company_enName" class="easyui-validatebox easyui-textbox" prompt="请输入企业英文名称" name="enName" data-options="required:true, missingMessage:'请输入企业英文名称'">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top" style="float:left;">中文简介：</label>
+
+                <div class="company_cnDescNote" style="float:left;"></div>
+
+                <input type="hidden" name="cnDesc" id="company_cnDesc"/>
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top" style="float:left;">英文简介：</label>
+
+                <div class="company_enDescNote" style="float:left;"></div>
+
+                <input type="hidden" name="enDesc" id="company_enDesc"/>
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top">中文标签：</label>
+                <input id="company_cnLabelId" name="cnLabelId" class="easyui-combobox" data-options="required:true, missingMessage:'请输入中文标签'">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top">英文标签：</label>
+                <input id="company_enLabelId" class="easyui-validatebox easyui-textbox" prompt="请输入英文标签" name="enLabelId" data-options="required:true, missingMessage:'请输入英文标签'">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top">企业LOGO：</label>
+
+            </div>
+            <div class="form-item col-md-10">
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="saveCompany()">保存</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="cancelCompany()">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    ;(function ($, window, document, undefined){
+        $('#companyTab').datagrid({
+            url: App.href + '/api/common/company/list',
+            fit: true,
+            pagination: true,
+            fitColumns: true,
+            method: 'GET',
+            pageSize: 10,
+            pageList: [10, 25, 50, 100, 200],
+            height: 400,
+            queryParams: {},
+            toolbar: [],
+            loadFilter: function(data) {
+                if (data.code === 401) {
+                    App.showMsg('token失效,请登录!');
+                    window.location.href = App.href + '/login.html';
+                    return {"total":0, "rows": "[]"};
+                } else {
+                    return data;
+                }
+            },
+            onBeforeLoad: function (param) {
+                var cityId = $("input[name=cityId]").val();
+
+                param.cityId = cityId;
+            },
+            columns: [
+                [{
+                    field: 'id',
+                    title: '序号',
+                    sortable: true,
+                    width: 50
+                }, {
+                    field: 'cityCnName',
+                    title: '城市中文名称',
+                    width: 50
+                }, {
+                    field: 'cityEnName',
+                    title: '城市英文名称',
+                    width: 50
+                }, {
+                    field: 'cnName',
+                    title: '公司中文名称',
+                    width: 50
+                }, {
+                    field: 'enName',
+                    title: '公司英文名称',
+                    width: 50
+                }, {
+                    field: 'companyLogo',
+                    title: '企业LOGO',
+                    width: 50
+                }, {
+                    field: 'ctime',
+                    title: '创建时间',
+                    width: 50
+                }, {
+                    field: 'custom_col1',
+                    title: '操作',
+                    width: 50,
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var btns = new Array();
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateCompany(' + row.id + ')">修改</a>&nbsp;');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="delCompany(' + row.id + ')">删除</a>');
+                        return btns.join('');
+                    }
+                }]
+            ]
+        });
+
+        $('#companyForm').form({
+            url: App.href + '/api/common/company/save',
+            method: 'POST',
+            onSubmit:function(){
+                return $(this).form('validate');
+            },
+            success:function(data){
+                var obj = JSON.parse(data);
+                if (obj.code == 200) {
+                    App.showMsg('保存成功');
+                    $('#companyWin').window('close');
+                } else {
+                    App.showMsg(obj.message);
+                }
+                refreshCompany();
+            }
+        });
+
+        companyRefreshOptions();
+
+    })(jQuery, window, document);
+
+
+    function refreshCompany() {
+        $('#companyTab').datagrid('reload');
+    }
+
+    function companyRefreshOptions() {
+        //获取城市信息
+        App.getRequestData("/api/common/city/options", {}, function(data) {
+            data.unshift({value:'', text:'请选择'});
+            $("#company_cityId").combobox({
+                valueField: 'value',
+                textField: 'text',
+                editable: false,
+                required: true,
+                mode: 'local',
+                value: '',
+                data: data
+            });
+
+            $("#company_searchCityId").combobox({
+                valueField: 'value',
+                textField: 'text',
+                editable: false,
+                required: true,
+                mode: 'local',
+                value: '',
+                data: data
+            });
+        });
+    }
+
+    /**
+     * 添加
+     *
+     */
+    function addCompany() {
+        $('#companyWin').window({
+            width: "80%",
+            height: "80%",
+            modal:true
+        });
+
+        companyRefreshOptions();
+
+        $('#companyForm').form({'url': App.href + '/api/common/company/save'});
+        $('#companyWin').window({title: '新增'});
+
+        $("#companyForm").find("input[name=id]").val('');
+
+        $("#company_cityId").combobox('setValue', '');
+        $("#company_cnName").textbox('setValue', '');
+        $("#company_enName").textbox('setValue', '');
+
+        $('.company_cnDescNote').summernote('code', '');
+        $('.company_enDescNote').summernote('code', '');
+
+
+        $("#company_cnLabelId").combobox('setValue', '');
+        $("#company_enLabelId").combobox('setValue', '');
+    }
+
+    /**
+     * 新增
+     */
+    function saveCompany() {
+        $('#companyForm').submit();
+    }
+
+    /**
+     * 关闭弹框
+     */
+    function cancelCompany() {
+        $('#companyWin').window('close');
+    }
+
+    /**
+     * 更新
+     * @param id
+     */
+    function updateCompany(id) {
+        $('#companyWin').window({
+            width: "80%",
+            height: "80%",
+            modal:true
+        });
+
+        companyRefreshOptions();
+
+        App.getRequestData('/api/common/company/get', {'id': id}, function(data){
+            $('#companyForm').form({'url': App.href + '/api/common/company/update'});
+            $('#companyWin').window({title: '更新'});
+
+            $("#companyForm").find("input[name=id]").val(data.id);
+
+            $("#company_cityId").combobox('setValue', data.cityId);
+            $("#company_cnName").textbox('setValue', data.cnName);
+            $("#company_enName").textbox('setValue', data.enName);
+
+            $('.company_cnDescNote').summernote('code', data.cnDesc);
+            $('.company_enDescNote').summernote('code', data.enDesc);
+
+
+            $("#company_cnLabelId").combobox('setValue', data.cnLabelId);
+            $("#company_enLabelId").combobox('setValue', data.enLabelId);
+        });
+    }
+
+    /**
+     * 删除
+     * @param id
+     */
+    function delCompany(id) {
+        $.messager.confirm('提示', '确定删除？', function(r) {
+            if(r) {
+                App.getRequestData('/api/common/company/delete', {id: id}, function(data){
+                    App.showMsg('删除成功');
+                    refreshCompany();
+                });
+            }
+        });
+    }
+
+</script>
+
+</body>
+</html>

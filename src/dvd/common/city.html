@@ -85,6 +85,13 @@
             </div>
         </form>
     </div>
+
+    <div id="contactWin" style="display: none;padding-top:30px;padding-left:100px;" title="交流浏览">
+        <input type="hidden" name="contactCityId" />
+        <div style="height: 400px;">
+            <table id="contactTab"></table>
+        </div>
+    </div>
 </div>
 
 
@@ -144,10 +151,6 @@
                     title: '国家英文名称',
                     width: 50
                 }, {
-                    field: 'countryCode',
-                    title: '国家代码值',
-                    width: 50
-                }, {
                     field: 'cityCn',
                     title: '城市中文名称',
                     width: 50
@@ -156,17 +159,17 @@
                     title: '城市英文名称',
                     width: 50
                 }, {
-                    field: 'code',
-                    title: '城市代码值',
-                    width: 50
-                }, {
-                    field: 'contact',
-                    title: '驿站反馈人',
-                    width: 50
-                }, {
-                    field: 'email',
-                    title: '驿站反馈邮箱',
-                    width: 50
+                    field: 'isOnline',
+                    title: '状态',
+                    width: 50,
+                    formatter: function(value, row, index) {
+                        var str = "下线";
+                        if(row.isOnline == 1) {
+                            str = "上线";
+                        }
+
+                        return str;
+                    }
                 }, {
                     field: 'createUserName',
                     title: '创建人',
@@ -190,8 +193,15 @@
                     align: 'center',
                     formatter: function(value, row, index) {
                         var btns = new Array();
+                        if(row.isOnline == 0) {
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="onlineCity(' + row.id + ', 1, "' + row.cityCn + '")">上线</a>&nbsp;');
+                        } else {
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="onlineCity(' + row.id + ', 0, "' + row.cityCn + '")">下线</a>&nbsp;');
+                        }
                         btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateCity(' + row.id + ')">修改</a>&nbsp;');
-                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="delCity(' + row.id + ')">删除</a>');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="delCity(' + row.id + ',"' + row.cityCn + '")">删除</a>&nbsp;');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="contactList(' + row.id + ')">交流浏览</a>');
+
                         return btns.join('');
                     }
                 }]
@@ -216,7 +226,64 @@
             }
         });
 
+        $('#contactTab').datagrid({
+            url: App.href + '/api/common/contact/list',
+            fit: true,
+            pagination: true,
+            fitColumns: true,
+            method: 'GET',
+            pageSize: 10,
+            pageList: [10, 25, 50, 100, 200],
+            height: 400,
+            queryParams: {},
+            toolbar: [],
+            loadFilter: function(data) {
+                if (data.code === 401) {
+                    App.showMsg('token失效,请登录!');
+                    window.location.href = App.href + '/login.html';
+                    return {"total":0, "rows": "[]"};
+                } else {
+                    return data;
+                }
+            },
+            onBeforeLoad: function (param) {
+                var cityId = $("input[name=contactCityId]").val();
 
+                param.cityId = cityId;
+            },
+            columns: [
+                [{
+                    field: 'id',
+                    title: '序号',
+                    sortable: true,
+                    width: 50
+                }, {
+                    field: 'title',
+                    title: '标题',
+                    width: 50
+                }, {
+                    field: 'content',
+                    title: '内容',
+                    width: 50
+                }, {
+                    field: 'userName',
+                    title: '本人姓名',
+                    width: 50
+                }, {
+                    field: 'mobilePhone',
+                    title: '本人联系方式',
+                    width: 50
+                }, {
+                    field: 'ctime',
+                    title: '提交时间',
+                    width: 50
+                }, {
+                    field: 'userId',
+                    title: '提交人用户ID',
+                    width: 50
+                }]
+            ]
+        });
 
     })(jQuery, window, document);
 
@@ -312,15 +379,58 @@
      * 删除
      * @param id
      */
-    function delCity(id) {
-        $.messager.confirm('提示', '确定删除？', function(r) {
+    function delCity(id, cityCn) {
+        $.messager.confirm('提示', '请确认，是否删除<' + cityCn + '>城市信息？', function(r) {
             if(r) {
                 App.getRequestData('/api/common/city/delete', {id: id}, function(data){
-                    App.showMsg('删除成功');
+                    App.showMsg('<'+ cityCn +'>城市已删除');
                     refreshCity();
                 });
             }
         });
+    }
+
+    /**
+     * 下线/上线城市信息
+     *
+     * @param id
+     * @param isOnline
+     */
+    function onlineCity(id, isOnline, cityCn) {
+        var msg = "<"+ cityCn +">城市已改为上线状态";
+        if (isOnline == 0) {
+            msg = "<"+ cityCn +">城市已改为下线状态";
+        }
+
+        App.getRequestData('/api/common/city/onlineCity', {id: id, isOnline: isOnline}, function(data){
+            App.showMsg(msg);
+            refreshCity();
+        });
+    }
+
+    /**
+     * 交流浏览
+     *
+     * @param cityId
+     */
+    function contactList(cityId) {
+        $('#contactWin').window({
+            width: "80%",
+            height: "80%",
+            modal:true
+        });
+
+        $("input[name=contactCityId]").val(cityId);
+
+
+        refreshContact();
+    }
+
+    /**
+     * 刷新交流浏览
+     */
+    function refreshContact() {
+        $('#contactTab').datagrid('reload');
     }
 
 </script>
