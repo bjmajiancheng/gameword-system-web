@@ -209,7 +209,7 @@
      * 删除
      * @param id
      */
-    function delhelp(id) {
+    function delHelp(id) {
         $.messager.confirm('提示', '确定删除？', function(r) {
             if(r) {
                 App.getRequestData('/api/common/help/delete', {id: id}, function(data){
