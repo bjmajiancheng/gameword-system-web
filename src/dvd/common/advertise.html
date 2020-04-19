@@ -25,6 +25,20 @@
         <a href="javascript:void(0)" onclick="refreshAdvertisement()" class="easyui-linkbutton primary">查询</a>
         <a href="javascript:void(0)" onclick="addAdvertise()" class="easyui-linkbutton primary">新增</a>
     </div>
+
+    <!--
+    <form id="form1" method="post" enctype="multipart/form-data">
+        <input class="easyui-textbox" id="applicationId" name="applicationId">
+        <input class="easyui-filebox" data-options="prompt:'浏览'" id="contractFile" name="contractFile" style="width:155px">
+        <input class="easyui-filebox" data-options="prompt:'浏览'" id="invoiceFile" name="invoiceFile" style="width:155px">
+    </form>
+    <div class="easyui-dialog" id="add" style="width:750px;height:450px;overflow: auto;"
+         title="审批" data-options="{closed:true,modal:true,buttons:[
+			{text:'提交',iconCls:'icon-save',handler:function(){submit();}},
+			{text:'取消',iconCls:'icon-cancel',handler:function(){$('#add').dialog('close')}}
+		]}">
+    </div>
+    -->
 </div>
 
 <div class="clear"></div>
@@ -38,22 +52,22 @@
             <input name="id" type="hidden" />
             <div class="form-item col-md-10">
                 <label class="label-top">平台：</label>
-                <input id="advertise_platform" name="platform" class="easyui-combobox" data-options="required:true, missingMessage:'请输入国家'">
+                <input id="advertise_platform" name="platform" class="easyui-combobox" data-options="required:true, missingMessage:'请输入平台名称'">
             </div>
 
             <div class="form-item col-md-10">
                 <label class="label-top">开屏图片：</label>
-                <input id="advertise_image" name="advertiseImage" class="easyui-validatebox easyui-textbox" prompt="请输入开屏图片路径名称" data-options="required:true, missingMessage:'请输入开屏图片路径名称'">
+                <input id="advertise_image" name="image" class="easyui-validatebox easyui-textbox" prompt="请输入开屏图片路径名称" data-options="required:true, missingMessage:'请输入开屏图片路径名称'">
             </div>
 
             <div class="form-item col-md-10">
                 <label class="label-top">链接：</label>
-                <input id="advertise_link" name="advertiseLink" class="easyui-validatebox easyui-textbox" prompt="请输入开屏页跳转链接" data-options="required:true, missingMessage:'请输入开屏页跳转链接'">
+                <input id="advertise_link" name="link" class="easyui-validatebox easyui-textbox" prompt="请输入开屏页跳转链接" data-options="required:true, missingMessage:'请输入开屏页跳转链接'">
             </div>
 
             <div class="form-item col-md-10">
                 <label class="label-top">状态：</label>
-                <select id="advertise_status" class="easyui-combobox" data-options="editable:false,panelHeight:null" name="status">
+                <select id="advertise_status" name="status" class="easyui-combobox" data-options="editable:false,panelHeight:null">
                     <option value="1" selected>上线</option>
                     <option value="0">下线</option>
                 </select>
@@ -137,15 +151,15 @@
                         return statusStr;
                     }
                 }, {
-                    field: 'user_id',
+                    field: 'createUserName',
                     title: '创建人',
                     width: 50
                 }, {
-                    field: 'c_time',
+                    field: 'ctime',
                     title: '创建时间',
                     width: 50
                 }, {
-                    field: 'u_time',
+                    field: 'utime',
                     title: '最后修改时间',
                     width: 50
                 }, {
@@ -179,7 +193,7 @@
                 var obj = JSON.parse(data);
                 if (obj.code == 200) {
                     App.showMsg('保存成功');
-                    $('#advertiseWin').window('close');
+                    setAdvertiseWinActive(false);
                 } else {
                     App.showMsg(obj.message);
                 }
@@ -244,20 +258,31 @@
      *
      */
     function addAdvertise() {
+        setAdvertiseWinActive(true);
 
-        $('#advertiseWin').window({
-            width: "80%",
-            height: "80%",
-            modal:true
-        });
-        $('#advertiseForm').form({'url': App.href + '/api/advertise/save'});
+        //$('#advertiseForm').form({'url': App.href + '/api/advertise/save'});
         $('#advertiseWin').window({title: '新增'});
 
-        $("#advertise_platform").combobox('setValue', '');
-        $("#advertise_image").textbox('setValue', '');
-        $("#advertise_status").textbox('setValue', '');
 
-        $("#advertiseForm").find("input[name=id]").val('');
+        $('#advertiseForm').form({
+            url: App.href + '/api/advertise/save',
+            method: 'POST',
+            onSubmit:function(){
+                return $(this).form('validate');
+            },
+            success:function(data){
+                var obj = JSON.parse(data);
+                if (obj.code == 200) {
+                    App.showMsg('保存成功');
+                    setAdvertiseWinActive(false);
+                } else {
+                    App.showMsg(obj.message);
+                }
+                refreshAdvertisement();
+            }
+        });
+
+        resetAddvertiseWin();
     }
 
     /**
@@ -271,7 +296,8 @@
      * 关闭
      */
     function cancelAdvertise() {
-        $('#advertiseWin').window('close');
+        setAdvertiseWinActive(false);
+        resetAddvertiseWin();
     }
 
     /**
@@ -279,14 +305,29 @@
      * @param id
      */
     function updateAdvertise(id) {
-        $('#advertiseWin').window({
-            width: "80%",
-            height: "80%",
-            modal:true
-        });
 
         App.getRequestData('/api/advertise/get', {'id': id}, function(data){
-            $('#advertiseForm').form({'url': App.href + '/api/advertise/update'});
+            setAdvertiseWinActive(true);
+
+            $('#advertiseForm').form({
+                url: App.href + '/api/advertise/update',
+                method: 'POST',
+                onSubmit:function(){
+                    return $(this).form('validate');
+                },
+                success:function(data){
+                    var obj = JSON.parse(data);
+                    if (obj.code == 200) {
+                        App.showMsg('更新成功');
+                        setAdvertiseWinActive(false);
+                    } else {
+                        App.showMsg(obj.message);
+                    }
+                    refreshAdvertisement();
+                }
+            });
+
+
             $('#advertiseWin').window({title: '更新'});
 
 
@@ -299,6 +340,33 @@
         });
     }
 
+    function resetAddvertiseWin () {
+
+        $("#advertise_platform").combobox('setValue', '');
+        $("#advertise_image").textbox('setValue', '');
+        $("#advertise_link").textbox('setValue', '');
+        $("#advertise_status").textbox('setValue', '');
+
+        $("#advertiseForm").find("input[name=id]").val('');
+    }
+
+    /**
+     * 开屏广告设置界面
+     * @param active 是否显示
+     * */
+    function setAdvertiseWinActive (active) {
+        if(active){
+            $('#advertiseWin').window({
+                width: "80%",
+                height: "80%",
+                modal:true
+            });
+        }
+        else{
+            $('#advertiseWin').window('close');
+        }
+    }
+
     /**
      * 删除
      * @param id
@@ -307,8 +375,14 @@
         $.messager.confirm('提示', '确定删除？', function(r) {
             if(r) {
                 App.getRequestData('/api/advertise/delete', {'id': id}, function(data){
-                    App.showMsg('删除成功');
-                    refreshAdvertisement();
+                    // var obj = JSON.parse(data);
+                    // if (obj.code == 200) {
+                        App.showMsg('删除成功');
+                        refreshAdvertisement();
+                    // } else {
+                    //     App.showMsg(data.message);
+                    // }
+
                 });
             }
         });
@@ -322,9 +396,14 @@
      */
     function updateAdvertiseStatus(id, status) {
         App.getRequestData('/api/advertise/updateStatus', {'id': id, 'status': status}, function(data){
+            // var obj = JSON.parse(data);
+            // if (obj.code == 200) {
+                App.showMsg('状态修改成功');
+                refreshAdvertisement();
+            // } else {
+            //     App.showMsg(data.message);
+            // }
 
-            App.showMsg('状态修改成功');
-            refreshAdvertisement();
         });
     }
 
