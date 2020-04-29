@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>前台用户管理</title>
+</head>
+<body>
+<div class="super-theme-example searchForm">
+    <div class="search-form-item col-md-4">
+        <label class="label-top">姓名：</label>
+        <input name="user_name" class="easyui-validatebox easyui-textbox" prompt="请输入用户姓名">
+    </div>
+
+    <div class="search-form-item col-md-4">
+        <label class="label-top">昵称：</label>
+        <input name="nick_name" class="easyui-validatebox easyui-textbox" prompt="请输入昵称">
+    </div>
+
+    <div class="search-form-item col-md-4">
+        <label class="label-top">性别：</label>
+        <input name="sex" class="easyui-validatebox easyui-textbox" prompt="请输入绑定电话">
+    </div>
+
+    <div class="search-form-item col-md-4">
+        <label class="label-top">国籍：</label>
+        <input name="country_id" class="easyui-validatebox easyui-textbox" prompt="请输入绑定电话">
+    </div>
+
+    <div class="search-form-item col-md-4">
+        <label class="label-top">城市：</label>
+        <input name="city_id" class="easyui-validatebox easyui-textbox" prompt="请输入绑定电话">
+    </div>
+
+    <div class="search-form-item col-md-4">
+        <label class="label-top">机构学校名称：</label>
+        <input name="agency_name" class="easyui-validatebox easyui-textbox" prompt="请输入绑定电话">
+    </div>
+
+    <div class="search-form-item col-md-4">
+        <label class="label-top">是否禁言：</label>
+        <input name="status" class="easyui-validatebox easyui-textbox" prompt="禁言/正常">
+    </div>
+
+    <div class="search-form-item col-md-4">
+        <label class="label-top">状态：</label>
+        <input name="enabled" class="easyui-validatebox easyui-textbox" prompt="冻结/正常">
+    </div>
+
+    <div class="search-form-item col-md-4">
+        <label class="label-top">注册时间：</label>
+        <input name="register_time" class="easyui-validatebox easyui-textbox" prompt="注册时间">
+    </div>
+
+    <div class="search-form-item col-md-4">
+        <label class="label-top">用户类型：</label>
+        <input name="user_type" class="easyui-validatebox easyui-textbox" prompt="请输入用户类型">
+    </div>
+
+    <div class="search-form-item col-md-4">
+        <label class="label-top">邀请码：</label>
+        <input name="invite_code" class="easyui-validatebox easyui-textbox" prompt="请输入邀请码">
+    </div>
+
+    <div class="search-form-item col-md-3">
+        <a href="javascript:void(0)" onclick="refreshFrontUser()" class="easyui-linkbutton primary">查询</a>
+    </div>
+
+    <div class="search-form-item col-md-3">
+        <a href="javascript:void(0)" onclick="export2Excel()" class="easyui-linkbutton primary">导出</a>
+    </div>
+</div>
+
+<div class="clear"></div>
+
+<div class="super-theme-example">
+    <div style="height: 340px;">
+        <table id="userTab"></table>
+    </div>
+
+    <div id="userDetailWin" style="display: none;padding-top:30px;" title="用户详细信息">
+        <h2 style="font-size: 25px; margin: 15px;" class="align_center">用户详细信息</h2>
+
+        <form id="userDetailForm" method="post">
+            <input type="hidden" name="id" />
+            <input type="hidden" name="status" />
+
+            <div class="form-item col-md-10">
+                <label class="label-top" style="float:left;">头像：</label>
+                <div id="userImgDiv" style="float:left;">
+                </div>
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top">姓名：</label>
+<!--                <label id="companyDetail_companyFullName" name="companyFullName" class="label-top"></label>-->
+                <input id="userDetail_Name" name="user_name" class="easyui-validatebox easyui-textbox" editable="false" prompt="请输入企业全称" data-options="required:true, missingMessage:'请输入企业全称'" style="width:80%;">
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top">昵称：</label>
+                <input id="userDetail_nickName" name="nick_name" class="easyui-validatebox easyui-textbox" editable="false" prompt="请输入企业简称" data-options="required:true, missingMessage:'请输入企业简称'" style="width:80%;">
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top">性别：</label>
+                <input id="userDetail_sex" name="sex" class="easyui-validatebox easyui-textbox" editable="false" prompt="请输入企业简称" data-options="required:true, missingMessage:'请输入企业简称'" style="width:80%;">
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top">年龄：</label>
+                <input id="userDetail_age" name="age" class="easyui-validatebox easyui-textbox" editable="false" prompt="请输入企业简称" data-options="required:true, missingMessage:'请输入企业简称'" style="width:80%;">
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top">国籍：</label>
+                <input id="userDetail_nation" name="nation" class="easyui-validatebox easyui-textbox" editable="false" prompt="请输入企业简称" data-options="required:true, missingMessage:'请输入企业简称'" style="width:80%;">
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top">城市：</label>
+                <input id="userDetail_city" name="city_id" class="easyui-validatebox easyui-textbox" editable="false" prompt="请输入企业简称" data-options="required:true, missingMessage:'请输入企业简称'" style="width:80%;">
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top">机构/学校名称：</label>
+                <input id="userDetail_school" name="school" class="easyui-validatebox easyui-textbox" editable="false" prompt="请输入企业简称" data-options="required:true, missingMessage:'请输入企业简称'" style="width:80%;">
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top">总积分：</label>
+                <input id="userDetail_score" name="score" class="easyui-validatebox easyui-textbox" editable="false" prompt="请输入企业简称" data-options="required:true, missingMessage:'请输入企业简称'" style="width:80%;">
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top">是否禁言：</label>
+                <input id="userDetail_enable" name="status" class="easyui-validatebox easyui-textbox" editable="false" prompt="请输入企业简称" data-options="required:true, missingMessage:'请输入企业简称'" style="width:80%;">
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top">状态：</label>
+                <input id="userDetail_state" name="status" class="easyui-validatebox easyui-textbox" editable="false" prompt="请输入企业简称" data-options="required:true, missingMessage:'请输入企业简称'" style="width:80%;">
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top">注册时间：</label>
+                <input id="userDetail_registerTime" name="user_type" class="easyui-validatebox easyui-textbox" editable="false" prompt="请输入企业简称" data-options="required:true, missingMessage:'请输入企业简称'" style="width:80%;">
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top">用户类型：</label>
+                <input id="userDetail_type" name="user_type" class="easyui-validatebox easyui-textbox" editable="false" prompt="请输入企业简称" data-options="required:true, missingMessage:'请输入企业简称'" style="width:80%;">
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top">邀请码：</label>
+                <input id="userDetail_inviteCode" name="invite_code" class="easyui-validatebox easyui-textbox" editable="false" prompt="请输入企业简称" data-options="required:true, missingMessage:'请输入企业简称'" style="width:80%;">
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top">所属行业：</label>
+
+                <span id="industryIdSpan">
+
+            </span>
+            </div>
+
+            <div class="form-item col-md-10" style="height:300px;">
+                <label class="label-top" style="float:left;">个人简介：</label>
+
+                <input type="hidden" name="userDesc"/>
+
+                <div style="position: relative; float:left;margin-left:4px;width:80%;height:300px;">
+                    <div class="easyui-texteditor" id="companyDetail_userDescDiv" title="个人简介" style="width:100%;height:300px;padding:20px;top:0px;">
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top">余额 人民币：</label>
+
+                <input id="userDetail_cn_balance" name="cn_balance" class="easyui-validatebox easyui-textbox" prompt="请输入GPS坐标" data-options="required:true, missingMessage:'请输入GPS坐标'" style="width:80%;">
+
+                <label class="label-top">美元：</label>
+
+                <input id="userDetail_en_balance" name="en_balance" class="easyui-validatebox easyui-textbox" prompt="请输入GPS坐标" data-options="required:true, missingMessage:'请输入GPS坐标'" style="width:80%;">
+
+            </div>
+
+            <div class="form-item col-md-10">
+                <label class="label-top">消费充值记录：</label>
+                <input id="userDetail_charge" name="contactAddress" class="easyui-validatebox easyui-textbox" prompt="请输入企业地址" data-options="required:true, missingMessage:'请输入企业地址'" style="width:80%;">
+            </div>
+
+            <div style="height: 340px;">
+                <table id="userDetail_ChargeTab"></table>
+            </div>
+
+            <input type="hidden" name="rejectReason" />
+            <div class="clear"></div>
+
+
+            <div class="form-item col-md-10 align_center control_btn">
+                <a href="javascript:void(0)" onclick="passCompany()" class="easyui-linkbutton primary">通过</a>
+                <a href="javascript:void(0)" onclick="rejectCompany()" class="easyui-linkbutton primary">不通过</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div class="super-theme-example">
+
+</div>
+
+<script type="text/javascript">
+    ;(function ($, window, document, undefined){
+
+        $('#userTab').datagrid({
+            url: App.href + '/api/system/user/list',
+            fit: true,
+            pagination: true,
+            fitColumns: true,
+            method: 'GET',
+            pageSize: 10,
+            pageList: [10, 25, 50, 100, 200],
+            height: 340,
+            queryParams: {},
+            toolbar: [],
+            loadFilter: function(data) {
+                if (data.code === 401) {
+                    App.showMsg('token失效,请登录!');
+                    window.location.href = App.href + '/login.html';
+                    return {"total":0, "rows": "[]"};
+                } else {
+                    return data;
+                }
+            },
+            onBeforeLoad: function (param) {
+                var adminUserName = $(".searchForm").find("input[name=adminUserName]").val();
+                var contactMobile = $(".searchForm").find("input[name=contactMobile]").val();
+
+                param.adminUserName = adminUserName;
+                param.contactMobile = contactMobile;
+            },
+            columns: [
+                [{
+                    field: 'id',
+                    title: '序号',
+                    sortable: true,
+                    width: 50
+                }, {
+                    field: 'userName',
+                    title: '姓名',
+                    width: 50
+                }, {
+                    field: 'nickName',
+                    title: '昵称',
+                    width: 50
+                }, {
+                    field: 'sex',
+                    title: '性别',
+                    width: 50,
+                    formatter: function(value, row, index) {
+                        var sexStr = "未知";
+                        if(row.sex == 1) {
+                            sexStr = "男";
+                        }
+                        else if(row.sex == 2){
+                            sexStr = "女";
+                        }
+
+                        return sexStr;
+                    }
+                }, {
+                // TODO 缺失字断
+                    field: 'age',
+                    title: '年龄',
+                    width: 50
+                }, {
+                    field: 'countryName',
+                    title: '国籍',
+                    width: 50
+                },{
+                    field: 'cityName',
+                    title: '城市',
+                    width: 50
+                },{
+                    field: 'agencyName',
+                    title: '学校/机构名称',
+                    width: 50
+                },{
+                // TODO 缺失字断
+                    field: 'cityName',
+                    title: '个人总积分',
+                    width: 50
+                },{
+                    field: 'registerTime',
+                    title: '注册时间',
+                    width: 50
+                },{
+                    field: 'enabled',
+                    title: '状态',
+                    width: 50,
+                    formatter: function(value, row, index) {
+                        var str = "冻结";
+                        if(row.enabled == 1) {
+                            str = "正常";
+                        }
+
+                        return str;
+                    }
+                },{
+                    field: 'userType',
+                    title: '用户类型',
+                    width: 50,
+                    formatter: function(value, row, index) {
+                        var str = "";
+                        if(row.userType == 0){
+                            str = "学生";
+                        }
+                        else if(row.userType == 1) {
+                            str = "商务会员";
+                        }
+
+                        return str;
+                    }
+                },{
+                    field: 'cnBalance',
+                    title: '人民币余额',
+                    width: 50
+                },{
+                    field: 'enBalance',
+                    title: '美元余额',
+                    width: 50
+                },{
+                    field: 'inviteCode',
+                    title: '邀请码',
+                    width: 50
+                },{
+                    field: 'custom_col1',
+                    title: '操作',
+                    width: 80,
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var btns = new Array();
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="showUserDetail('+ row.id +', 1)">详情</a>');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="resetPassword('+ row.id +', 1)">重置密码</a>');
+                        if(row.state == 1)
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="setUserSpeakState('+ row.id +', 0)">取消禁言</a>');
+                        else
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="setUserSpeakState('+ row.id +', 1)">禁言</a>');
+
+                        if(row.enabled == 1)
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="setUserStatus('+ row.id +', 0)">冻结</a>');
+                        else
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="setUserStatus('+ row.id +', 1)">恢复</a>');
+                        return btns.join('');
+                    }
+                }]
+            ]
+        });
+
+        $('#userDetailForm').form({
+            url: App.href + '/api/system/user/updateUser',
+            method: 'POST',
+            onSubmit:function(){
+                return $(this).form('validate');
+            },
+            success:function(data){
+                var obj = JSON.parse(data);
+                if (obj.code == 200) {
+                    App.showMsg('保存成功');
+                    $('#userDetailWin').window('close');
+                    refreshFrontUser();
+                } else {
+                    App.showMsg(obj.message);
+                }
+            }
+        });
+
+
+    })(jQuery, window, document);
+
+
+    /**
+     * 用户详细信息
+     * **/
+    function showUserDetail(id) {
+        $('#userDetailWin').window({
+            width: "80%",
+            height: "80%",
+            modal:true
+        });
+
+        App.getRequestData('/api/system/user/getUser', {'id': id}, function(data) {
+            $("#userDetailForm").find("input[name=id]").val(data.id);
+            $("#userDetailForm").find("input[name=status]").val(data.status);
+
+            $("#userName").find("input[name=user_name]").val(data.user_name);
+            $("#userDetail_nickName").textbox('setValue', data.nick_name);
+            $("#userDetail_sex").textbox('setValue', data.sex);
+            $("#userDetail_nation").textbox('setValue', data.agency_name);
+
+            if(data.enabled == 1) {
+                $("#userDetail_enable").textbox('setValue', '正常');
+            }else if(data.enabled == 2){
+                $("#userDetail_enable").textbox('setValue', '冻结');
+            }
+
+            if(data.status == 0) {
+                $("#userDetail_state").textbox('setValue', '正常');
+            }else if(data.status == 1){
+                $("#userDetail_state").textbox('setValue', '禁言');
+            }
+
+            $("#userDetail_registerTime").textbox('setValue', data.register_time);
+            $("#userDetail_score").textbox('setValue', '0');
+
+            $("#userDetail_inviteCode").textbox('setValue', data.invite_code);
+            $("#companyDetail_userDescDiv").texteditor('setValue', data.userDesc);
+
+            App.showImage("userImgDiv", data.head_image);
+
+            $("#userDetail_cn_balance").textbox('setValue', '人民币' + data.cn_balance + '元');
+            $("#userDetail_en_balance").textbox('setValue', data.cn_balance + '元');
+
+            // var chargeArr = {total: data.charge, rows:[]};
+            $("#userDetail_ChargeTab").datagrid({
+                //TODO 等待充值完成后处理
+                //url : 'chargeDetail',
+                data: null,
+                columns: [
+                    [{
+                        field: 'time',
+                        title: '时间',
+                        sortable: true,
+                        width: 50
+                    },{
+                        field: 'item',
+                        title: '项目',
+                        sortable: true,
+                        width: 50
+                    },{
+                        field: 'num',
+                        title: '金额',
+                        sortable: true,
+                        width: 50
+                    },
+                    ]
+                ]
+            });
+
+            $('#userTab').datagrid({
+                url: App.href + '/api/system/user/list',
+                fit: true,
+                pagination: true,
+                fitColumns: true,
+                method: 'GET',
+                pageSize: 10,
+                pageList: [10, 25, 50, 100, 200],
+                height: 340,
+                queryParams: {},
+                toolbar: [],
+                loadFilter: function(data) {
+                    if (data.code === 401) {
+                        App.showMsg('token失效,请登录!');
+                        window.location.href = App.href + '/login.html';
+                        return {"total":0, "rows": "[]"};
+                    } else {
+                        return data;
+                    }
+                },
+                onBeforeLoad: function (param) {
+                    var adminUserName = $(".searchForm").find("input[name=adminUserName]").val();
+                    var contactMobile = $(".searchForm").find("input[name=contactMobile]").val();
+
+                    param.adminUserName = adminUserName;
+                    param.contactMobile = contactMobile;
+                },
+                columns: [
+                    [{
+                        field: 'time',
+                        title: '时间',
+                        sortable: true,
+                        width: 50
+                    },{
+                        field: 'item',
+                        title: '项目',
+                        sortable: true,
+                        width: 50
+                    },{
+                        field: 'num',
+                        title: '金额',
+                        sortable: true,
+                        width: 50,
+                        formatter: function(value, row, index) {
+                            var showStr = "人民币";
+                            if(row.balanceType == 1) {
+                                showStr = "美元";
+                            }
+
+                            return showStr + row.balanceVal + '元';
+                        }
+                    },
+                    //     {
+                    //     field: 'custom_col1',
+                    //     title: '操作',
+                    //     width: 80,
+                    //     align: 'center',
+                    //     formatter: function(value, row, index) {
+                    //         var btns = new Array();
+                    //         btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="showUserDetail('+ row.id +', 1)">详情</a>');
+                    //         btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="showUserDetail('+ row.id +', 1)">重置密码</a>');
+                    //         btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="showUserDetail('+ row.id +', 1)">取消禁言</a>');
+                    //         if(row.state == 1)
+                    //             btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="showUserDetail('+ row.id +', 1)">禁用</a>');
+                    //         else
+                    //             btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="showUserDetail('+ row.id +', 1)">恢复</a>');
+                    //         return btns.join('');
+                    //     }
+                    // }
+                    ]
+                ]
+            });
+
+            $("#industryIdSpan").html('');
+
+            //
+            // if(data.reviewStatus == 1) {
+            //     $(".control_btn").hide();
+            // } else if(data.reviewStatus == 0) {
+            //     $(".control_btn").show();
+            // }
+        });
+
+
+        $('#userImgDiv').html('');
+
+        var userImgEle = App.uploadImage({id:"userImg", name: 'userImg', isAjaxUpload: true, autoUpload: true});
+        $('#userImgDiv').append(userImgEle);
+    }
+
+    /**
+     * 重置密码
+     *
+     * @returns {boolean}
+     */
+    function resetPassword() {
+        var adminUserName = $("#userDetailForm").find("input[name=adminUserName]").val();
+        /*var adminPassword = $("#userDetailForm").find("input[name=adminPassword]").val();*/
+
+        if(adminUserName == undefined || adminUserName == '') {
+            App.showMsg('请输入企业登录账号');
+            return false;
+        }
+
+        /*if(adminPassword == undefined || adminPassword == '') {
+            App.showMsg('请输入后台密码');
+            return false;
+        }*/
+
+        $("#userDetailForm").find("input[name=status]").val(1);
+
+        if(validateCompany()) {
+            $("#userDetailForm").submit();
+        }
+    }
+
+    /**
+     * 设置禁言状态
+     */
+    function setUserStatus(status) {
+        App.prompt('请输入不通过原因', function(data){
+            $("#userDetailForm").find("input[name=rejectReason]").val(data);
+
+            $("#userDetailForm").find("input[name=status]").val(2);
+
+            if(validateCompany()) {
+                $("#userDetailForm").submit();
+            }
+        });
+    }
+
+    /**
+     * 设置用户角色
+     */
+    function setUserSpeakState(state) {
+        App.prompt('请输入不通过原因', function(data){
+            $("#userDetailForm").find("input[name=rejectReason]").val(data);
+
+            $("#userDetailForm").find("input[name=status]").val(2);
+
+            if(validateCompany()) {
+                $("#userDetailForm").submit();
+            }
+        });
+    }
+
+    function export2Excel() {
+
+    }
+
+    function refreshFrontUser() {
+        $('#userTab').datagrid('reload');
+    }
+
+</script>
+</body>
+</html>
