@@ -18,32 +18,66 @@
 
     <div class="search-form-item col-md-4">
         <label class="label-top">性别：</label>
-        <input name="sex" class="easyui-validatebox easyui-textbox" prompt="请输入绑定电话">
+        <input name="sex" class="easyui-combobox" prompt="请输入性别"
+               data-options="
+                valueField: 'label',
+                textField: 'value',
+                data: [{
+                    label: '1',
+                    value: '男'
+                },{
+                    label: '2',
+                    value: '女'
+                }]" />
     </div>
 
     <div class="search-form-item col-md-4">
         <label class="label-top">国籍：</label>
-        <input name="country_id" class="easyui-validatebox easyui-textbox" prompt="请输入绑定电话">
+        <input name="country_id" class="easyui-validatebox easyui-textbox" prompt="请输入国籍"/>
+<!--               data-options="-->
+<!--                valueField: 'label',-->
+<!--                textField: 'value',-->
+<!--                url:'/api/system/user/getUser'"-->
     </div>
 
     <div class="search-form-item col-md-4">
         <label class="label-top">城市：</label>
-        <input name="city_id" class="easyui-validatebox easyui-textbox" prompt="请输入绑定电话">
+        <input name="city_id" class="easyui-validatebox easyui-textbox" prompt="请输入城市">
     </div>
 
     <div class="search-form-item col-md-4">
         <label class="label-top">机构学校名称：</label>
-        <input name="agency_name" class="easyui-validatebox easyui-textbox" prompt="请输入绑定电话">
+        <input name="agency_name" class="easyui-validatebox easyui-textbox" prompt="请输入机构/学校">
     </div>
 
     <div class="search-form-item col-md-4">
         <label class="label-top">是否禁言：</label>
-        <input name="status" class="easyui-validatebox easyui-textbox" prompt="禁言/正常">
+        <input name="status" class="easyui-combobox" prompt="禁言/正常"
+               data-options="
+                valueField: 'label',
+                textField: 'value',
+                data: [{
+                    label: '1',
+                    value: '禁言'
+                },{
+                    label: '2',
+                    value: '正常'
+                }]"/>
     </div>
 
     <div class="search-form-item col-md-4">
         <label class="label-top">状态：</label>
-        <input name="enabled" class="easyui-validatebox easyui-textbox" prompt="冻结/正常">
+        <input name="enabled" class="easyui-combobox" prompt="冻结/正常"
+               data-options="
+                valueField: 'label',
+                textField: 'value',
+                data: [{
+                    label: '1',
+                    value: '正常'
+                },{
+                    label: '2',
+                    value: '冻结'
+                }]" />
     </div>
 
     <div class="search-form-item col-md-4">
@@ -53,7 +87,17 @@
 
     <div class="search-form-item col-md-4">
         <label class="label-top">用户类型：</label>
-        <input name="user_type" class="easyui-validatebox easyui-textbox" prompt="请输入用户类型">
+        <input name="user_type" class="easyui-combobox" prompt="请输入用户类型"
+               data-options="
+                valueField: 'label',
+                textField: 'value',
+                data: [{
+                    label: '0',
+                    value: '学生'
+                },{
+                    label: '1',
+                    value: '商务会员'
+                }]"/>
     </div>
 
     <div class="search-form-item col-md-4">
@@ -133,17 +177,17 @@
 
             <div class="form-item col-md-10">
                 <label class="label-top">是否禁言：</label>
-                <input id="userDetail_enable" name="status" class="easyui-validatebox easyui-textbox" editable="false" prompt="" data-options="required:true, missingMessage:''" style="width:80%;">
+                <input id="userDetail_enable" name="enable" class="easyui-validatebox easyui-textbox" editable="false" prompt="" data-options="required:true, missingMessage:''" style="width:80%;">
             </div>
 
             <div class="form-item col-md-10">
                 <label class="label-top">状态：</label>
-                <input id="userDetail_state" name="status" class="easyui-validatebox easyui-textbox" editable="false" prompt="" data-options="required:true, missingMessage:''" style="width:80%;">
+                <input id="userDetail_state" name="state" class="easyui-validatebox easyui-textbox" editable="false" prompt="" data-options="required:true, missingMessage:''" style="width:80%;">
             </div>
 
             <div class="form-item col-md-10">
                 <label class="label-top">注册时间：</label>
-                <input id="userDetail_registerTime" name="user_type" class="easyui-validatebox easyui-textbox" editable="false" prompt="" data-options="required:true, missingMessage:''" style="width:80%;">
+                <input id="userDetail_registerTime" name="rigister_time" class="easyui-validatebox easyui-textbox" editable="false" prompt="" data-options="required:true, missingMessage:''" style="width:80%;">
             </div>
 
             <div class="form-item col-md-10">
@@ -178,21 +222,20 @@
 
             <div class="form-item col-md-10">
                 <label class="label-top">余额 人民币：</label>
+                <input id="userDetail_cn_balance" name="cn_balance" class="easyui-validatebox easyui-textbox" prompt="" editable="false" data-options="required:true, missingMessage:''" style="width:80%;">
+            </div>
 
-                <input id="userDetail_cn_balance" name="cn_balance" class="easyui-validatebox easyui-textbox" prompt="" data-options="required:true, missingMessage:''" style="width:80%;">
-
+            <div class="form-item col-md-10">
                 <label class="label-top">余额 美元：</label>
-
-                <input id="userDetail_en_balance" name="en_balance" class="easyui-validatebox easyui-textbox" prompt="" data-options="required:true, missingMessage:''" style="width:80%;">
-
+                <input id="userDetail_en_balance" name="en_balance" class="easyui-validatebox easyui-textbox" prompt="" editable="false" data-options="required:true, missingMessage:''" style="width:80%;">
             </div>
 
             <div class="form-item col-md-10">
                 <label class="label-top">消费充值记录：</label>
-                <input id="userDetail_charge" name="contactAddress" class="easyui-validatebox easyui-textbox" prompt="" data-options="required:true, missingMessage:''" style="width:80%;">
+<!--                <input id="userDetail_charge" name="contactAddress" class="easyui-validatebox easyui-textbox" prompt="" data-options="required:true, missingMessage:''" style="width:80%;">-->
             </div>
 
-            <div style="height: 340px;">
+            <div class="form-item col-md-10" style="height: 340px;">
                 <table id="userDetail_ChargeTab"></table>
             </div>
 
@@ -200,10 +243,10 @@
             <div class="clear"></div>
 
 
-            <div class="form-item col-md-10 align_center control_btn">
-                <a href="javascript:void(0)" onclick="passCompany()" class="easyui-linkbutton primary">通过</a>
-                <a href="javascript:void(0)" onclick="rejectCompany()" class="easyui-linkbutton primary">不通过</a>
-            </div>
+<!--            <div class="form-item col-md-10 align_center control_btn">-->
+<!--                <a href="javascript:void(0)" onclick="passCompany()" class="easyui-linkbutton primary">通过</a>-->
+<!--                <a href="javascript:void(0)" onclick="rejectCompany()" class="easyui-linkbutton primary">不通过</a>-->
+<!--            </div>-->
         </form>
     </div>
 </div>
@@ -237,11 +280,30 @@
                 }
             },
             onBeforeLoad: function (param) {
-                var adminUserName = $(".searchForm").find("input[name=adminUserName]").val();
-                var contactMobile = $(".searchForm").find("input[name=contactMobile]").val();
+                var userName = $(".searchForm").find("input[name=user_name]").val();
+                var nickName = $(".searchForm").find("input[name=nick_name]").val();
+                var sex = $(".searchForm").find("input[name=sex]").val();
+                var countryId = $(".searchForm").find("input[name=country_id]").val();
+                var cityId = $(".searchForm").find("input[name=city_id]").val();
+                var agencyName = $(".searchForm").find("input[name=agency_name]").val();
+                var status = $(".searchForm").find("input[name=status]").val();
+                var enabled = $(".searchForm").find("input[name=enabled]").val();
+                var registerTime = $(".searchForm").find("input[name=register_time]").val();
+                var userType = $(".searchForm").find("input[name=user_type]").val();
+                var inviteCode = $(".searchForm").find("input[name=invite_code]").val();
 
-                param.adminUserName = adminUserName;
-                param.contactMobile = contactMobile;
+                param.userName = userName;
+                param.nickName = nickName;
+                param.sex = sex;
+                param.countryId = countryId;
+                param.cityId = cityId;
+                param.agencyName = agencyName;
+                param.status = status;
+                param.enabled = enabled;
+                if(registerTime !== '')
+                    param.registerTime = registerTime;
+                param.userType = userType;
+                param.inviteCode = inviteCode;
             },
             columns: [
                 [{
@@ -344,12 +406,15 @@
                     align: 'center',
                     formatter: function(value, row, index) {
                         var btns = new Array();
-                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="showUserDetail('+ row.id +', 1)">详情</a>');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="showUserDetail('+ row.id +', 1)">详情</a>&nbsp;');
                         btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="resetPassword('+ row.id +', 1)">重置密码</a>');
+
+                        btns.push('<br>');
+
                         if(row.state == 1)
-                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="setUserSpeakState('+ row.id +', 0)">取消禁言</a>');
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="setUserSpeakState('+ row.id +', 0)">取消禁言</a>&nbsp;');
                         else
-                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="setUserSpeakState('+ row.id +', 1)">禁言</a>');
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="setUserSpeakState('+ row.id +', 1)">禁言</a>&nbsp;');
 
                         if(row.enabled == 1)
                             btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="setUserStatus('+ row.id +', 0)">冻结</a>');
@@ -361,27 +426,25 @@
             ]
         });
 
-        $('#userDetailForm').form({
-            url: App.href + '/api/system/user/updateUser',
-            method: 'POST',
-            onSubmit:function(){
-                return $(this).form('validate');
-            },
-            success:function(data){
-                var obj = JSON.parse(data);
-                if (obj.code == 200) {
-                    App.showMsg('保存成功');
-                    $('#userDetailWin').window('close');
-                    refreshFrontUser();
-                } else {
-                    App.showMsg(obj.message);
-                }
-            }
-        });
-
+        // $('#userDetailForm').form({
+        //     url: App.href + '/api/system/user/updateUser',
+        //     method: 'POST',
+        //     onSubmit:function(){
+        //         return $(this).form('validate');
+        //     },
+        //     success:function(data){
+        //         var obj = JSON.parse(data);
+        //         if (obj.code == 200) {
+        //             App.showMsg('保存成功');
+        //             $('#userDetailWin').window('close');
+        //             refreshFrontUser();
+        //         } else {
+        //             App.showMsg(obj.message);
+        //         }
+        //     }
+        // });
 
     })(jQuery, window, document);
-
 
     /**
      * 用户详细信息
@@ -434,91 +497,18 @@
                         field: 'time',
                         title: '时间',
                         sortable: true,
-                        width: 50
+                        width: 150
                     },{
                         field: 'item',
                         title: '项目',
                         sortable: true,
-                        width: 50
+                        width: 350
                     },{
                         field: 'num',
                         title: '金额',
                         sortable: true,
-                        width: 50
+                        width: 150
                     },
-                    ]
-                ]
-            });
-
-            $('#userTab').datagrid({
-                url: App.href + '/api/system/user/list',
-                fit: true,
-                pagination: true,
-                fitColumns: true,
-                method: 'GET',
-                pageSize: 10,
-                pageList: [10, 25, 50, 100, 200],
-                height: 340,
-                queryParams: {},
-                toolbar: [],
-                loadFilter: function(data) {
-                    if (data.code === 401) {
-                        App.showMsg('token失效,请登录!');
-                        window.location.href = App.href + '/login.html';
-                        return {"total":0, "rows": "[]"};
-                    } else {
-                        return data;
-                    }
-                },
-                onBeforeLoad: function (param) {
-                    var adminUserName = $(".searchForm").find("input[name=adminUserName]").val();
-                    var contactMobile = $(".searchForm").find("input[name=contactMobile]").val();
-
-                    param.adminUserName = adminUserName;
-                    param.contactMobile = contactMobile;
-                },
-                columns: [
-                    [{
-                        field: 'time',
-                        title: '时间',
-                        sortable: true,
-                        width: 50
-                    },{
-                        field: 'item',
-                        title: '项目',
-                        sortable: true,
-                        width: 50
-                    },{
-                        field: 'num',
-                        title: '金额',
-                        sortable: true,
-                        width: 50,
-                        formatter: function(value, row, index) {
-                            var showStr = "人民币";
-                            if(row.balanceType == 1) {
-                                showStr = "美元";
-                            }
-
-                            return showStr + row.balanceVal + '元';
-                        }
-                    },
-                    //     {
-                    //     field: 'custom_col1',
-                    //     title: '操作',
-                    //     width: 80,
-                    //     align: 'center',
-                    //     formatter: function(value, row, index) {
-                    //         var btns = new Array();
-                    //         btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="showUserDetail('+ row.id +', 1)">详情</a>');
-                    //         btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="showUserDetail('+ row.id +', 1)">重置密码</a>');
-                    //         btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="showUserDetail('+ row.id +', 1)">取消禁言</a>');
-                    //         if(row.state == 1)
-                    //             btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="showUserDetail('+ row.id +', 1)">禁用</a>');
-                    //         else
-                    //             btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="showUserDetail('+ row.id +', 1)">恢复</a>');
-                    //         return btns.join('');
-                    //     }
-                    // }
                     ]
                 ]
             });
@@ -545,54 +535,46 @@
      *
      * @returns {boolean}
      */
-    function resetPassword() {
-        var adminUserName = $("#userDetailForm").find("input[name=adminUserName]").val();
-        /*var adminPassword = $("#userDetailForm").find("input[name=adminPassword]").val();*/
-
-        if(adminUserName == undefined || adminUserName == '') {
-            App.showMsg('请输入企业登录账号');
-            return false;
-        }
-
-        /*if(adminPassword == undefined || adminPassword == '') {
-            App.showMsg('请输入后台密码');
-            return false;
-        }*/
-
-        $("#userDetailForm").find("input[name=status]").val(1);
-
-        if(validateCompany()) {
-            $("#userDetailForm").submit();
-        }
-    }
-
-    /**
-     * 设置禁言状态
-     */
-    function setUserStatus(status) {
-        App.prompt('请输入不通过原因', function(data){
-            $("#userDetailForm").find("input[name=rejectReason]").val(data);
-
-            $("#userDetailForm").find("input[name=status]").val(2);
-
-            if(validateCompany()) {
-                $("#userDetailForm").submit();
+    function resetPassword(id) {
+        App.getRequestData('/api/system/user/resetPassword', {'id': id}, function(data){
+            var obj = JSON.parse(data);
+            if (obj.code == 200) {
+                App.showMsg('重置密码发送成功，请到邮件里查看');
+            } else {
+                App.showMsg(obj.message);
             }
         });
     }
 
     /**
-     * 设置用户角色
+     * 设置用户角色禁用状态
      */
-    function setUserSpeakState(state) {
-        App.prompt('请输入不通过原因', function(data){
-            $("#userDetailForm").find("input[name=rejectReason]").val(data);
+    function setUserStatus(id, enabled) {
+        App.getRequestData('/api/system/user/updateUserEnabled', {'id': id, 'enabled':enabled}, function(data){
+            App.showMsg('状态修改成功');
 
-            $("#userDetailForm").find("input[name=status]").val(2);
+            // var obj = JSON.parse(data);
+            // if (obj.code == 200) {
+            //     refreshAdvertisement();
+            // } else {
+            //     App.showMsg(obj.message);
+            // }
+        });
+    }
 
-            if(validateCompany()) {
-                $("#userDetailForm").submit();
-            }
+    /**
+     * 设置禁言状态
+     */
+    function setUserSpeakState(status) {
+        App.getRequestData('/api/system/user/updateUserStatus', {'id': id, 'status':status}, function(data){
+            App.showMsg('状态修改成功');
+
+            // var obj = JSON.parse(data);
+            // if (obj.code == 200) {
+            //     refreshAdvertisement();
+            // } else {
+            //     App.showMsg(obj.message);
+            // }
         });
     }
 
