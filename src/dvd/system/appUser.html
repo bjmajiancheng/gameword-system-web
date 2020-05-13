@@ -22,6 +22,7 @@
                data-options="
                 valueField: 'label',
                 textField: 'value',
+                editable: false,
                 data: [{
                     label: '1',
                     value: '男'
@@ -33,7 +34,7 @@
 
     <div class="search-form-item col-md-4">
         <label class="label-top">国籍：</label>
-        <input name="country_id" class="easyui-validatebox easyui-textbox" prompt="请输入国籍"/>
+        <input id="station_countryId" name="country_id" class="easyui-validatebox easyui-textbox" prompt="请输入国籍"/>
 <!--               data-options="-->
 <!--                valueField: 'label',-->
 <!--                textField: 'value',-->
@@ -42,7 +43,7 @@
 
     <div class="search-form-item col-md-4">
         <label class="label-top">城市：</label>
-        <input name="city_id" class="easyui-validatebox easyui-textbox" prompt="请输入城市">
+        <input id="station_cityId" name="city_id" class="easyui-validatebox easyui-textbox" prompt="请输入城市">
     </div>
 
     <div class="search-form-item col-md-4">
@@ -56,6 +57,7 @@
                data-options="
                 valueField: 'label',
                 textField: 'value',
+                editable: false,
                 data: [{
                     label: '1',
                     value: '禁言'
@@ -71,6 +73,7 @@
                data-options="
                 valueField: 'label',
                 textField: 'value',
+                editable: false,
                 data: [{
                     label: '1',
                     value: '正常'
@@ -91,7 +94,11 @@
                data-options="
                 valueField: 'label',
                 textField: 'value',
+                editable: false,
                 data: [{
+                    label: '-1',
+                    value: '全部',
+                },{
                     label: '0',
                     value: '学生'
                 },{
@@ -302,7 +309,11 @@
                 param.enabled = enabled;
                 if(registerTime !== '')
                     param.registerTime = registerTime;
-                param.userType = userType;
+
+                //-1 代表全部，不限制
+                if(userType != '-1')
+                    param.userType = userType;
+
                 param.inviteCode = inviteCode;
             },
             columns: [
@@ -444,6 +455,9 @@
         //     }
         // });
 
+        refreshCountryOptions();
+        refreshCityOptions();
+
     })(jQuery, window, document);
 
     /**
@@ -528,6 +542,38 @@
 
         var userImgEle = App.uploadImage({id:"userImg", name: 'userImg', isAjaxUpload: true, autoUpload: true});
         $('#userImgDiv').append(userImgEle);
+    }
+
+    function refreshCountryOptions() {
+        // 获取国家信息
+        App.getRequestData("/api/common/country/options", {}, function(data) {
+            data.unshift({value:'', text:'请选择'});
+            $("#station_countryId").combobox({
+                valueField: 'value',
+                textField: 'text',
+                editable: false,
+                required: true,
+                mode: 'local',
+                value: '',
+                data: data
+            });
+        });
+    }
+
+    function refreshCityOptions() {
+        //获取城市信息
+        App.getRequestData("/api/common/city/options", {}, function(data) {
+            data.unshift({value:'', text:'请选择'});
+            $("#station_cityId").combobox({
+                valueField: 'value',
+                textField: 'text',
+                editable: false,
+                required: true,
+                mode: 'local',
+                value: '',
+                data: data
+            });
+        });
     }
 
     /**
