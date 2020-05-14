@@ -179,8 +179,10 @@
             height: 300,
             tabsize: 2,
             lang: 'zh-CN',
-            onImageUpload: function(files, editor, $editable) {
-                App.uploadSummerPic(files[0], editor, $editable);
+            callbacks: {
+                onImageUpload: function(files, editor, $editable) {
+                    App.uploadSummerPic(files[0], editor, $editable);
+                }
             }
         });
 
@@ -188,8 +190,10 @@
             height: 300,
             tabsize: 2,
             lang: 'zh-CN',
-            onImageUpload: function(files, editor, $editable) {
-                App.uploadSummerPic(files[0], editor, $editable);
+            callbacks: {
+                onImageUpload: function(files, editor, $editable) {
+                    App.uploadSummerPic(files[0], editor, $editable);
+                }
             }
         });
 
