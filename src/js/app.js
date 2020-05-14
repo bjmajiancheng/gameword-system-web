@@ -520,7 +520,7 @@
      * @param editor
      * @param $editable
      */
-    App.uploadSummerPic = function(file, editor, $editable) {
+    App.uploadSummerPic = function(file, editor, $editable, element) {
         var fd = new FormData();
         fd.append("file", file);
         $.ajax({
@@ -534,9 +534,7 @@
                 /*editor.insertImage($editable, data.attachmentUrl);*/
                 debugger;
                 alert('123123');
-                editor.summernote('insertImage', data, function ($image) {
-                    $image.attr('src', data);
-                });
+                $(element).summernote('editor.insertImage', data.attachmentUrl);
             }
         });
     }

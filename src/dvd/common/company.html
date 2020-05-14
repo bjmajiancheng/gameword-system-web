@@ -181,7 +181,7 @@
             lang: 'zh-CN',
             callbacks: {
                 onImageUpload: function(files, editor, $editable) {
-                    App.uploadSummerPic(files[0], editor, $editable);
+                    App.uploadSummerPic(files[0], editor, $editable, '.company_cnDescNote');
                 }
             }
         });
@@ -192,7 +192,7 @@
             lang: 'zh-CN',
             callbacks: {
                 onImageUpload: function(files, editor, $editable) {
-                    App.uploadSummerPic(files[0], editor, $editable);
+                    App.uploadSummerPic(files[0], editor, $editable, '.company_enDescNote');
                 }
             }
         });
@@ -384,3 +384,4 @@
 
 </body>
 </html>
+
