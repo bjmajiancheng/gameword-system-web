@@ -177,13 +177,22 @@
 
         $('.company_cnDescNote').summernote({
             height: 300,
-            tabsize: 2
+            tabsize: 2,
+            lang: 'zh-CN',
+            onImageUpload: function(files, editor, $editable) {
+                App.uploadSummerPic(files[0], editor, $editable);
+            }
         });
 
         $('.company_enDescNote').summernote({
             height: 300,
-            tabsize: 2
+            tabsize: 2,
+            lang: 'zh-CN',
+            onImageUpload: function(files, editor, $editable) {
+                App.uploadSummerPic(files[0], editor, $editable);
+            }
         });
+
 
         $('#companyLogoDiv').html('');
         var companyLogoEle = App.uploadImage({id: "companyLogo", name: 'companyLogo', isAjaxUpload: true, autoUpload: true});
