@@ -521,43 +521,6 @@
      * @param $editable
      */
     App.uploadSummerPic = function(file, editor, $editable) {
-        /*$.ajaxFileUpload({
-            url: App.href + "/api/common/uploadImage",
-            type: "POST",
-            fileElementId: "image_" + data.id,
-            dataType: "json",
-            success: function (json, status) {
-                if (json.code === 200) {
-                    json = json.data;
-
-                    ele.find('[role="file"]').on("change", function () {
-                        uploadFile();
-                    });
-                } else {
-                    alert(json.message);
-                    return;
-                }
-                if (data.onSuccess !== undefined) {
-                    data.onSuccess(json);
-                } else {
-                    if (json.attachmentUrl !== undefined) {
-                        ele
-                            .find(
-                                "[role='image-input']")
-                            .attr("value",
-                                json.attachmentUrl);
-                    } else {
-                        console
-                            .error("返回的json数据中为检测到fileUrl值");
-                    }
-                }
-                successIcon.show();
-            },
-            error: function (data, status, e) {
-                alert(e);
-            }
-        });*/
-        
         var fd = new FormData();
         fd.append("file", file);
         $.ajax({
@@ -568,7 +531,12 @@
             contentType: false,
             processData: false,
             success: function (data) {
-                editor.insertImage($editable, data.attachmentUrl);
+                /*editor.insertImage($editable, data.attachmentUrl);*/
+                debugger;
+                alert('123123');
+                editor.summernote('insertImage', data, function ($image) {
+                    $image.attr('src', data);
+                });
             }
         });
     }
@@ -582,4 +550,5 @@
     });
 
 })(jQuery, window, document);
+
 
