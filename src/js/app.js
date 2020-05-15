@@ -531,10 +531,8 @@
             contentType: false,
             processData: false,
             success: function (data) {
-                /*editor.insertImage($editable, data.attachmentUrl);*/
-                debugger;
-                alert('123123');
-                $(element).summernote('editor.insertImage', data.attachmentUrl);
+                alert(element);
+                $(element).summernote('editor.insertImage', 'http://' + window.location.host + data.attachmentUrl);
             }
         });
     }
@@ -548,5 +546,6 @@
     });
 
 })(jQuery, window, document);
+
 
 
