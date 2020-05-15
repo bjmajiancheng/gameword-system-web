@@ -531,8 +531,8 @@
             contentType: false,
             processData: false,
             success: function (data) {
-                alert(element);
-                $(element).summernote('editor.insertImage', 'http://' + window.location.host + data.attachmentUrl);
+                var obj = JSON.parse(data);
+                $(element).summernote('editor.insertImage', 'http://' + window.location.host + obj.data.attachmentUrl);
             }
         });
     }
