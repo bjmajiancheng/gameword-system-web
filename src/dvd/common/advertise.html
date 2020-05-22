@@ -55,10 +55,17 @@
                 <input id="advertise_platform" name="platform" class="easyui-combobox" data-options="required:true, missingMessage:'请输入平台名称'">
             </div>
 
+<!--            <div class="form-item col-md-10">-->
+<!--                <label class="label-top">开屏图片：</label>-->
+<!--                <input id="advertise_image" name="image" class="easyui-validatebox easyui-textbox" prompt="请输入开屏图片路径名称" data-options="required:true, missingMessage:'请输入开屏图片路径名称'">-->
+<!--            </div>-->
+
             <div class="form-item col-md-10">
-                <label class="label-top">开屏图片：</label>
-                <input id="advertise_image" name="image" class="easyui-validatebox easyui-textbox" prompt="请输入开屏图片路径名称" data-options="required:true, missingMessage:'请输入开屏图片路径名称'">
+                <label class="label-top" style="float:left;">开屏图片：</label>
+                <div id="advertiseImageDiv" style="float:left;">
+                </div>
             </div>
+
 
             <div class="form-item col-md-10">
                 <label class="label-top">链接：</label>
@@ -282,6 +289,10 @@
             }
         });
 
+        $('#advertiseImageDiv').html('');
+        var advImageEle = App.uploadImage({id: "image", name: 'image', isAjaxUpload: true, autoUpload: true});
+        $('#advertiseImageDiv').append(advImageEle);
+
         resetAddvertiseWin();
     }
 
@@ -337,7 +348,14 @@
             $("#advertise_status").combobox('setValue', data.status);
 
             $("#advertiseForm").find("input[name=id]").val(data.id);
+
+            $("#image").attr('value', data.image);
+            App.showImage("advertiseImageDiv", data.image);
         });
+
+        $('#advertiseImageDiv').html('');
+        var advImageEle = App.uploadImage({id: "image", name: 'image', isAjaxUpload: true, autoUpload: true});
+        $('#advertiseImageDiv').append(advImageEle);
     }
 
     function resetAddvertiseWin () {
