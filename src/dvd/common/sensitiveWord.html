@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>敏感词过滤</title>
+</head>
+<body>
+<div class="super-theme-example searchForm">
+    <div class="search-form-item col-md-4">
+        <label class="label-top">语种：</label>
+        <select name="language" class="easyui-combobox" data-options="editable:false,panelHeight:null" prompt="请输入语种">
+            <option value="1" selected>中文</option>
+            <option value="2">英文</option>
+        </select>
+    </div>
+    <div class="search-form-item col-md-4">
+        <label class="label-top">敏感词：</label>
+        <input name="sensitiveWord" class="easyui-validatebox easyui-textbox" prompt="请输入敏感词">
+    </div>
+
+    <div class="search-form-item col-md-3">
+        <a href="javascript:void(0)" onclick="refreshSensitiveWord()" class="easyui-linkbutton primary">查询</a>
+        <a href="javascript:void(0)" onclick="addSensitiveWord()" class="easyui-linkbutton primary">新增</a>
+    </div>
+</div>
+
+<div class="clear"></div>
+<div class="super-theme-example">
+    <div style="height: 400px;">
+        <table id="sensitiveWordTab"></table>
+    </div>
+
+    <div id="sensitiveWordWin" style="display: none;padding-top:30px;padding-left:100px;" title="新增">
+        <form id="sensitiveWordForm" method="post">
+            <input name="id" type="hidden" />
+            <div class="form-item col-md-10">
+                <label class="label-top">敏感词：</label>
+                <input id="sensitiveWord_sensitiveWord" class="easyui-validatebox easyui-textbox" prompt="请输入敏感词" name="sensitiveWord" data-options="required:true, missingMessage:'请输入敏感词'">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top">语言：</label>
+                <select id="sensitiveWord_language" class="easyui-combobox" data-options="editable:false,panelHeight:null" name="language">
+                    <option value="1" selected>中文</option>
+                    <option value="2">英文</option>
+                </select>
+            </div>
+            <div class="form-item col-md-10">
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="saveSensitiveWord()">保存</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="cancelSensitiveWord()">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    ;(function ($, window, document, undefined){
+        $('#sensitiveWordTab').datagrid({
+            url: App.href + '/api/common/sensitiveWord/list',
+            fit: true,
+            pagination: true,
+            fitColumns: true,
+            method: 'GET',
+            pageSize: 10,
+            pageList: [10, 25, 50, 100, 200],
+            height: 400,
+            queryParams: {},
+            toolbar: [],
+            loadFilter: function(data) {
+                if (data.code === 401) {
+                    App.showMsg('token失效,请登录!');
+                    window.location.href = App.href + '/login.html';
+                    return {"total":0, "rows": "[]"};
+                } else {
+                    return data;
+                }
+            },
+            onBeforeLoad: function (param) {
+                var sensitiveWord = $(".searchForm").find("input[name=sensitiveWord]").val();
+                var language = $(".searchForm").find("input[name=language]").val();
+
+                param.sensitiveWord = sensitiveWord;
+                param.language = language;
+            },
+            columns: [
+                [{
+                    field: 'id',
+                    title: '序号',
+                    sortable: true,
+                    width: 50
+                }, {
+                    field: 'sensitiveWord',
+                    title: '敏感词',
+                    width: 50
+                }, {
+                    field: 'language',
+                    title: '语言',
+                    width: 50,
+                    formatter: function(value, row, index) {
+                        var languageStr = "未知";
+                        if(row.language == 1) {
+                            languageStr = "中文";
+                        } else if(row.language == 2) {
+                            languageStr = "英文";
+                        }
+                        return languageStr;
+                    }
+                }, {
+                    field: 'ctime',
+                    title: '创建时间',
+                    width: 50
+                }, {
+                    field: 'custom_col1',
+                    title: '操作',
+                    width: 50,
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var btns = new Array();
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateSensitiveWord(' + row.id + ')">修改</a>&nbsp;');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="delSensitiveWord(' + row.id + ')">删除</a>');
+                        return btns.join('');
+                    }
+                }]
+            ]
+        });
+
+        $('#sensitiveWordForm').form({
+            url: App.href + '/api/common/sensitiveWord/save',
+            method: 'POST',
+            onSubmit:function(){
+                return $(this).form('validate');
+            },
+            success:function(data){
+                var obj = JSON.parse(data);
+                if (obj.code == 200) {
+                    App.showMsg('保存成功');
+                    $('#labelWin').window('close');
+                } else {
+                    App.showMsg(obj.message);
+                }
+                refreshSensitiveWord();
+            }
+        });
+
+    })(jQuery, window, document);
+
+
+    function refreshSensitiveWord() {
+        $('#sensitiveWordTab').datagrid('reload');
+    }
+
+    /**
+     * 添加
+     *
+     */
+    function addSensitiveWord() {
+        $('#sensitiveWordWin').window({
+            width: "80%",
+            height: "80%",
+            modal:true
+        });
+        $('#sensitiveWordForm').form({'url': App.href + '/api/common/sensitiveWord/save'});
+        $('#sensitiveWordWin').window({title: '新增'});
+
+        $("#sensitiveWordForm").find("input[name=id]").val('');
+
+        $("#sensitiveWord_sensitiveWord").textbox('setValue', '');
+        $("#sensitiveWord_language").combobox('setValue', '');
+    }
+
+    /**
+     * 新增
+     */
+    function saveSensitiveWord() {
+        $('#sensitiveWordForm').submit();
+    }
+
+    /**
+     * 关闭弹框
+     */
+    function cancelSensitiveWord() {
+        $('#sensitiveWordWin').window('close');
+    }
+
+    /**
+     * 更新
+     * @param id
+     */
+    function updateSensitiveWord(id) {
+        $('#sensitiveWordWin').window({
+            width: "80%",
+            height: "80%",
+            modal:true
+        });
+
+        App.getRequestData('/api/common/sensitiveWord/get', {'id': id}, function(data){
+            $('#sensitiveWordForm').form({'url': App.href + '/api/common/sensitiveWord/update'});
+            $('#sensitiveWordWin').window({title: '更新'});
+
+            $("#sensitiveWordForm").find("input[name=id]").val(data.id);
+            $("#sensitiveWord_sensitiveWord").textbox('setValue', data.sensitiveWord);
+            $("#sensitiveWord_language").combobox('setValue', data.language);
+        });
+    }
+
+    /**
+     * 删除
+     * @param id
+     */
+    function delSensitiveWord(id) {
+        $.messager.confirm('提示', '确定删除？', function(r) {
+            if(r) {
+                App.getRequestData('/api/common/sensitiveWord/delete', {id: id}, function(data){
+                    App.showMsg('删除成功');
+                    refreshSensitiveWord();
+                });
+            }
+        });
+    }
+
+</script>
+</body>
+</html>
