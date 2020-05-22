@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>价格维护</title>
+</head>
+
+<body>
+
+<div class="super-theme-example">
+    <div class="search-form-item col-md-4">
+        <label class="label-top">中文学员（人民币元/分钟）：</label>
+        <label class="label-top currPriceConf_priceCn">0</label>
+    </div>
+    <div class="search-form-item col-md-4">
+        <label class="label-top">英文学员（美元/分钟）：</label>
+        <label class="label-top currPriceConf_priceEn">0</label>
+    </div>
+    <div class="search-form-item col-md-3">
+        <a href="javascript:void(0)" onclick="refreshPriceConf()" class="easyui-linkbutton primary">查询日志</a>
+        <a href="javascript:void(0)" onclick="addPriceConf()" class="easyui-linkbutton primary">价格维护</a>
+    </div>
+</div>
+
+<div class="clear"></div>
+<div class="super-theme-example">
+    <div style="height: 400px;">
+        <table id="priceConfTab"></table>
+    </div>
+
+    <div id="priceConfWin" style="display: none;padding-top:30px;padding-left:100px;" title="修改">
+        <form id="priceConfForm" method="post">
+            <input name="id" type="hidden" />
+            <div class="form-item col-md-10">
+                <label class="label-top" style="min-width: 207px;">中文学员（人民币元/分钟）：</label>
+                <input id="priceConf_priceCn" class="easyui-validatebox easyui-textbox" prompt="请输入中文学员（人民币元/分钟）" name="priceCn" data-options="required:true, missingMessage:'请输入中文学员（人民币元/分钟）'">
+            </div>
+            <div class="form-item col-md-10">
+                <label class="label-top" style="min-width: 207px;">英文学员（美元/分钟）：</label>
+                <input id="priceConf_priceEn" class="easyui-validatebox easyui-textbox" prompt="请输入英文学员（美元/分钟）" name="priceEn" data-options="required:true, missingMessage:'请输入英文学员（美元/分钟）'">
+            </div>
+            <div class="form-item col-md-10">
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="savePriceConf()">保存</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="cancelPriceConf()">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    ;(function ($, window, document, undefined){
+        $('#priceConfTab').datagrid({
+            url: App.href + '/api/common/priceConfRecord/list',
+            fit: true,
+            pagination: true,
+            fitColumns: true,
+            method: 'GET',
+            pageSize: 10,
+            pageList: [10, 25, 50, 100, 200],
+            height: 400,
+            queryParams: {},
+            toolbar: [],
+            loadFilter: function(data) {
+                if (data.code === 401) {
+                    App.showMsg('token失效,请登录!');
+                    window.location.href = App.href + '/login.html';
+                    return {"total":0, "rows": "[]"};
+                } else {
+                    return data;
+                }
+            },
+            onBeforeLoad: function (param) {
+
+            },
+            columns: [
+                [{
+                    field: 'id',
+                    title: '序号',
+                    sortable: true,
+                    width: 10
+                }, {
+                    field: 'userName',
+                    title: '账号',
+                    width: 20
+                }, {
+                    field: 'beforeDesc',
+                    title: '修改前',
+                    width: 50
+                }, {
+                    field: 'afterDesc',
+                    title: '修改后',
+                    width: 50
+                }, {
+                    field: 'ctime',
+                    title: '创建时间',
+                    width: 30
+                }]
+            ]
+        });
+
+        $('#priceConfForm').form({
+            url: App.href + '/api/common/priceConf/save',
+            method: 'POST',
+            onSubmit:function(){
+                return $(this).form('validate');
+            },
+            success:function(data){
+                var obj = JSON.parse(data);
+                if (obj.code == 200) {
+                    App.showMsg('保存成功');
+                    $('#labelWin').window('close');
+                } else {
+                    App.showMsg(obj.message);
+                }
+                refreshPriceConf();
+                refreshCurrPrice();
+            }
+        });
+
+        refreshCurrPrice();
+
+    })(jQuery, window, document);
+
+
+    function refreshPriceConf() {
+        $('#priceConfTab').datagrid('reload');
+    }
+
+    /**
+     * 刷新当前系统价格信息
+     */
+    function refreshCurrPrice() {
+        App.getRequestData('/api/common/priceConf/currPriceConf', {}, function(data){
+            $(".currPriceConf_priceCn").text(data.priceCn);
+            $(".currPriceConf_priceEn").text(data.priceEn);
+        });
+    }
+
+    /**
+     * 添加
+     *
+     */
+    function addPriceConf() {
+        $('#priceConfWin').window({
+            width: "80%",
+            height: "80%",
+            modal:true
+        });
+        $('#priceConfForm').form({'url': App.href + '/api/common/priceConf/save'});
+        $('#priceConfWin').window({title: '修改'});
+
+        $("priceConfForm").find("input[name=id]").val('');
+
+        $("#priceConf_priceCn").textbox('setValue', '');
+        $("#priceConf_priceEn").textbox('setValue', '');
+    }
+
+    /**
+     * 新增
+     */
+    function savePriceConf() {
+        $('#priceConfForm').submit();
+    }
+
+    /**
+     * 关闭弹框
+     */
+    function cancelPriceConf() {
+        $('#priceConfWin').window('close');
+    }
+
+</script>
+</body>
+</html>
