@@ -423,14 +423,14 @@
                         btns.push('<br>');
 
                         if(row.state == 1)
-                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="setUserSpeakState('+ row.id +', 0)">取消禁言</a>&nbsp;');
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="setUserSpeakState('+ row.id +', 0, ' + index + ')">取消禁言</a>&nbsp;');
                         else
-                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="setUserSpeakState('+ row.id +', 1)">禁言</a>&nbsp;');
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="setUserSpeakState('+ row.id +', 1, ' + index + ')">禁言</a>&nbsp;');
 
                         if(row.enabled == 1)
-                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="setUserStatus('+ row.id +', 0)">冻结</a>');
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="setUserStatus('+ row.id +', 0, ' + index + ')">冻结</a>');
                         else
-                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="setUserStatus('+ row.id +', 1)">恢复</a>');
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="setUserStatus('+ row.id +', 1, ' + index + ')">恢复</a>');
                         return btns.join('');
                     }
                 }]
@@ -595,10 +595,15 @@
     /**
      * 设置用户角色禁用状态
      */
-    function setUserStatus(id, enabled) {
+    function setUserStatus(id, enabled, index) {
         App.getRequestData('/api/system/user/updateUserEnabled', {'id': id, 'enabled':enabled}, function(data){
             App.showMsg('状态修改成功');
-
+            $("#userTab").datagrid("updateRow",{
+                index:index, //行索引
+                row:{
+                    enabled:data.enabled //行中的某个字段
+                }
+            });
             // var obj = JSON.parse(data);
             // if (obj.code == 200) {
             //     refreshAdvertisement();
@@ -611,10 +616,16 @@
     /**
      * 设置禁言状态
      */
-    function setUserSpeakState(status) {
+    function setUserSpeakState(id, status, index) {
         App.getRequestData('/api/system/user/updateUserStatus', {'id': id, 'status':status}, function(data){
             App.showMsg('状态修改成功');
 
+            $("#userTab").datagrid("updateRow",{
+                index:index, //行索引
+                row:{
+                    status:data.status //行中的某个字段
+                }
+            });
             // var obj = JSON.parse(data);
             // if (obj.code == 200) {
             //     refreshAdvertisement();
