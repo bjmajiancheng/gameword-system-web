@@ -140,10 +140,13 @@
                 }, {
                     field: 'image',
                     title: '开屏图片',
-                    width: 50
+                    width: 50,
+                    formatter: function(value, row, index) {
+                        return '<img src="' + App.href + row.image +'" width="100px" height="100px"/>';
+                    }
                 }, {
                     field: 'link',
-                    title: '链接',
+                    title: '跳转链接',
                     width: 50
                 }, {
                     field: 'status',
