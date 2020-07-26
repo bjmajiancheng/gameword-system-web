@@ -205,22 +205,46 @@
 
         $('.cnCityInfo').summernote({
             height: 300,
-            tabsize: 2
+            tabsize: 2,
+            lang: 'zh-CN',
+            callbacks: {
+                onImageUpload: function(files, editor, $editable) {
+                    App.uploadSummerPic(files[0], editor, $editable, '.cnCityInfo');
+                }
+            }
         });
 
         $('.enCityInfo').summernote({
             height: 300,
-            tabsize: 2
+            tabsize: 2,
+            lang: 'zh-CN',
+            callbacks: {
+                onImageUpload: function(files, editor, $editable) {
+                    App.uploadSummerPic(files[0], editor, $editable, '.enCityInfo');
+                }
+            }
         });
 
         $('.cnBusinessCooperation').summernote({
             height: 300,
-            tabsize: 2
+            tabsize: 2,
+            lang: 'zh-CN',
+            callbacks: {
+                onImageUpload: function(files, editor, $editable) {
+                    App.uploadSummerPic(files[0], editor, $editable, '.cnBusinessCooperation');
+                }
+            }
         });
 
         $('.enBusinessCooperation').summernote({
             height: 300,
-            tabsize: 2
+            tabsize: 2,
+            lang: 'zh-CN',
+            callbacks: {
+                onImageUpload: function(files, editor, $editable) {
+                    App.uploadSummerPic(files[0], editor, $editable, '.enBusinessCooperation');
+                }
+            }
         });
 
         stationRefreshOptions();
