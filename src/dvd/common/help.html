@@ -130,7 +130,12 @@
 
         $('.help_helpContentNote').summernote({
             height: 300,
-            tabsize: 2
+            tabsize: 2,
+            callbacks: {
+                onImageUpload: function(files, editor, $editable) {
+                    App.uploadSummerPic(files[0], editor, $editable, '.help_helpContentNote');
+                }
+            }
         });
 
     })(jQuery, window, document);
