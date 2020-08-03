@@ -141,27 +141,27 @@
                     field: 'id',
                     title: '序号',
                     sortable: true,
-                    width: 50
+                    width: 20
                 }, {
                     field: 'countryCnName',
                     title: '国家中文名称',
-                    width: 50
+                    width: 40
                 }, {
                     field: 'countryEnName',
                     title: '国家英文名称',
-                    width: 50
+                    width: 40
                 }, {
                     field: 'cityCn',
                     title: '城市中文名称',
-                    width: 50
+                    width: 40
                 }, {
                     field: 'cityEn',
                     title: '城市英文名称',
-                    width: 50
+                    width: 40
                 }, {
                     field: 'isOnline',
                     title: '状态',
-                    width: 50,
+                    width: 20,
                     formatter: function(value, row, index) {
                         var str = "下线";
                         if(row.isOnline == 1) {
@@ -173,33 +173,33 @@
                 }, {
                     field: 'createUserName',
                     title: '创建人',
-                    width: 50
+                    width: 30
                 }, {
                     field: 'ctime',
                     title: '创建时间',
-                    width: 50
+                    width: 60
                 }, {
                     field: 'updateUserName',
                     title: '最后修改人',
-                    width: 50
+                    width: 30
                 }, {
                     field: 'utime',
                     title: '最后修改时间',
-                    width: 50
+                    width: 60
                 }, {
                     field: 'custom_col1',
                     title: '操作',
-                    width: 50,
+                    width: 70,
                     align: 'center',
                     formatter: function(value, row, index) {
                         var btns = new Array();
                         if(row.isOnline == 0) {
-                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="onlineCity(' + row.id + ', 1, "' + row.cityCn + '")">上线</a>&nbsp;');
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="onlineCity(' + row.id + ', 1, \'' + row.cityCn + '\')">上线</a>&nbsp;');
                         } else {
-                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="onlineCity(' + row.id + ', 0, "' + row.cityCn + '")">下线</a>&nbsp;');
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="onlineCity(' + row.id + ', 0, \'' + row.cityCn + '\')">下线</a>&nbsp;');
                         }
                         btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="updateCity(' + row.id + ')">修改</a>&nbsp;');
-                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="delCity(' + row.id + ',"' + row.cityCn + '")">删除</a>&nbsp;');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="delCity(' + row.id + ',\'' + row.cityCn + '\')">删除</a>&nbsp;');
                         btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="contactList(' + row.id + ')">交流浏览</a>');
 
                         return btns.join('');
