@@ -59,11 +59,11 @@
                 textField: 'value',
                 editable: false,
                 data: [{
+                    label: '0',
+                    value: '正常'
+                },{
                     label: '1',
                     value: '禁言'
-                },{
-                    label: '2',
-                    value: '正常'
                 }]"/>
     </div>
 
@@ -75,11 +75,11 @@
                 textField: 'value',
                 editable: false,
                 data: [{
+                    label: '0',
+                    value: '冻结'
+                },{
                     label: '1',
                     value: '正常'
-                },{
-                    label: '2',
-                    value: '冻结'
                 }]" />
     </div>
 
@@ -372,6 +372,18 @@
                     title: '注册时间',
                     width: 50
                 },{
+                    field: 'status',
+                    title: '是否禁言',
+                    width: 50,
+                    formatter: function(value, row, index) {
+                        var str = "禁言";
+                        if(row.status == 0) {
+                            str = "正常";
+                        }
+
+                        return str;
+                    }
+                },{
                     field: 'enabled',
                     title: '状态',
                     width: 50,
@@ -480,7 +492,7 @@
 
             if(data.enabled == 1) {
                 $("#userDetail_enable").textbox('setValue', '正常');
-            }else if(data.enabled == 2){
+            }else if(data.enabled == 0){
                 $("#userDetail_enable").textbox('setValue', '冻结');
             }
 
