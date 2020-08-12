@@ -59,6 +59,9 @@
                 textField: 'value',
                 editable: false,
                 data: [{
+                    label: '-1',
+                    value: '全部'
+                },{
                     label: '0',
                     value: '正常'
                 },{
@@ -75,6 +78,9 @@
                 textField: 'value',
                 editable: false,
                 data: [{
+                    label: '-1',
+                    value: '全部'
+                },{
                     label: '0',
                     value: '冻结'
                 },{
@@ -104,7 +110,7 @@
                 },{
                     label: '1',
                     value: '商务会员'
-                }]"/>
+                }]" />
     </div>
 
     <div class="search-form-item col-md-4">
@@ -189,7 +195,7 @@
 
             <div class="form-item col-md-10">
                 <label class="label-top">状态：</label>
-                <input id="userDetail_state" name="state" class="easyui-validatebox easyui-textbox" editable="false" prompt="" data-options="required:true, missingMessage:''" style="width:80%;">
+                <input id="userDetail_status" name="status" class="easyui-validatebox easyui-textbox" editable="false" prompt="" data-options="required:true, missingMessage:''" style="width:80%;">
             </div>
 
             <div class="form-item col-md-10">
@@ -305,11 +311,16 @@
                 param.countryId = countryId;
                 param.cityId = cityId;
                 param.agencyName = agencyName;
-                param.status = status;
-                param.enabled = enabled;
+
                 if(registerTime !== '')
                     param.registerTime = registerTime;
 
+                //-1代表不限制
+                if(enabled != '-1')
+                    param.enabled = enabled;
+                //-1代表不限制
+                if(status != '-1')
+                    param.status = status;
                 //-1 代表全部，不限制
                 if(userType != '-1')
                     param.userType = userType;
@@ -434,15 +445,15 @@
 
                         btns.push('<br>');
 
-                        if(row.state == 1)
+                        if(row.status == 1)
                             btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="setUserSpeakState('+ row.id +', 0, ' + index + ')">取消禁言</a>&nbsp;');
                         else
                             btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="setUserSpeakState('+ row.id +', 1, ' + index + ')">禁言</a>&nbsp;');
 
                         if(row.enabled == 1)
-                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="setUserStatus('+ row.id +', 0, ' + index + ')">冻结</a>');
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="setUserEnabled('+ row.id +', 0, ' + index + ')">冻结</a>');
                         else
-                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="setUserStatus('+ row.id +', 1, ' + index + ')">恢复</a>');
+                            btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="setUserEnabled('+ row.id +', 1, ' + index + ')">恢复</a>');
                         return btns.join('');
                     }
                 }]
@@ -497,9 +508,9 @@
             }
 
             if(data.status == 0) {
-                $("#userDetail_state").textbox('setValue', '正常');
+                $("#userDetail_status").textbox('setValue', '正常');
             }else if(data.status == 1){
-                $("#userDetail_state").textbox('setValue', '禁言');
+                $("#userDetail_status").textbox('setValue', '禁言');
             }
 
             $("#userDetail_registerTime").textbox('setValue', data.registerTime);
@@ -607,7 +618,7 @@
     /**
      * 设置用户角色禁用状态
      */
-    function setUserStatus(id, enabled, index) {
+    function setUserEnabled(id, enabled, index) {
         App.getRequestData('/api/system/user/updateUserEnabled', {'id': id, 'enabled':enabled}, function(data){
             App.showMsg('状态修改成功');
             $("#userTab").datagrid("updateRow",{
