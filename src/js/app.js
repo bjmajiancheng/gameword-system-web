@@ -545,6 +545,15 @@
         window.location.href = App.href + "/login.html";
     });
 
+    App.generateExportUrl = function(url, param) {
+        var paramArr = [];
+        for (var o in param) {
+            paramArr.push(o + '=' + encodeURI(param[o]));
+        }
+
+        return url + '?' + paramArr.join("&");
+    }
+
 })(jQuery, window, document);
 
 

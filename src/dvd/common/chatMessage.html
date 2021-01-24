@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>聊天管理</title>
+</head>
+<body>
+<div class="super-theme-example">
+    <div class="search-form-item col-md-6">
+        <label class="label-top">日期：</label>
+        <input name="chatMessage_startDate" class="easyui-validatebox easyui-datebox" prompt="请输入开始时间"> -
+        <input name="chatMessage_endDate" class="easyui-validatebox easyui-datebox" prompt="请输入结束时间">
+    </div>
+    <div class="search-form-item col-md-4">
+        <label class="label-top">聊天人（姓名、昵称、ID）：</label>
+        <input name="chatMessage_user" class="easyui-validatebox easyui-textbox" prompt="聊天人（姓名、昵称、ID）">
+    </div>
+    <div class="search-form-item col-md-4">
+        <label class="label-top">聊天室：</label>
+        <select name="chatMessage_chatroomId" class="easyui-combobox" data-options="editable:false,panelHeight:null">
+            <option value="">全部</option>
+            <option value="0">公共聊天室</option>
+            <option value="1">商务聊天室</option>
+        </select>
+    </div>
+
+    <div class="search-form-item col-md-4">
+        <label class="label-top">聊天内容：</label>
+        <input name="chatMessage_content" class="easyui-validatebox easyui-textbox" prompt="聊天内容">
+    </div>
+
+    <div class="search-form-item col-md-4">
+        <label class="label-top">敏感内容：</label>
+        <input name="chatMessage_sensitiveWord" class="easyui-validatebox easyui-textbox" prompt="敏感内容">
+    </div>
+
+    <div class="search-form-item col-md-3">
+        <a href="javascript:void(0)" onclick="refreshChatMessage()" class="easyui-linkbutton primary">查询</a>
+        <a href="javascript:void(0)" onclick="exportChatMessage()" class="easyui-linkbutton primary">导出</a>
+    </div>
+</div>
+
+<div class="clear"></div>
+<div class="super-theme-example">
+    <div style="height: 400px;">
+        <table id="chatMessageTab"></table>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    ;(function ($, window, document, undefined){
+        $('#chatMessageTab').datagrid({
+            url: App.href + '/api/common/chatMessage/list',
+            fit: true,
+            pagination: true,
+            fitColumns: true,
+            method: 'GET',
+            pageSize: 10,
+            pageList: [10, 25, 50, 100, 200],
+            height: 400,
+            queryParams: {},
+            toolbar: [],
+            loadFilter: function(data) {
+                if (data.code === 401) {
+                    App.showMsg('token失效,请登录!');
+                    window.location.href = App.href + '/login.html';
+                    return {"total":0, "rows": "[]"};
+                } else {
+                    return data;
+                }
+            },
+            onBeforeLoad: function (param) {
+                var startDate = $("input[name=chatMessage_startDate]").val();
+                var endDate = $("input[name=chatMessage_endDate]").val();
+                var user = $("input[name=chatMessage_user]").val();
+                var chatroomId = $("input[name=chatMessage_chatroomId]").val();
+                var content = $("input[name=chatMessage_content]").val();
+                var sensitiveWord = $("input[name=chatMessage_sensitiveWord]").val();
+
+                param.startDate = startDate;
+                param.endDate = endDate;
+                param.userName = user;
+                param.chatroomId = chatroomId;
+                param.content = content;
+                param.sensitiveWord = sensitiveWord;
+            },
+            columns: [
+                [{
+                    field: 'id',
+                    title: '序号',
+                    sortable: true,
+                    width: 50
+                }, {
+                    field: 'chatroomName',
+                    title: '聊天室',
+                    width: 50
+                }, {
+                    field: 'chatroomId',
+                    title: '聊天室ID',
+                    width: 50
+                }, {
+                    field: 'sensitiveWord',
+                    title: '敏感词',
+                    width: 50
+                }, {
+                    field: 'content',
+                    title: '发言内容',
+                    width: 50
+                }, {
+                    field: 'userName',
+                    title: '发言人姓名',
+                    width: 50
+                }, {
+                    field: 'nickName',
+                    title: '昵称',
+                    width: 50
+                }, {
+                    field: 'userId',
+                    title: '发言人id',
+                    width: 50
+                }, {
+                    field: 'chatTime',
+                    title: '发言时间',
+                    width: 50
+                }, {
+                    field: 'hasVoice',
+                    title: '语音（有/无）',
+                    width: 50,
+                    formatter: function(value, row, index) {
+                        var voiceStr = "无";
+                        if (row.hasVoice == 1) {
+                            voiceStr = "有";
+                        }
+                        return voiceStr;
+                    }
+                }, {
+                    field: 'chatNickName',
+                    title: '交流对象昵称',
+                    width: 50
+                }, {
+                    field: 'chatUserId',
+                    title: '交流对象id',
+                    width: 50
+                }, {
+                    field: 'custom_col1',
+                    title: '操作',
+                    width: 50,
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var btns = new Array();
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="voiceChatMessage(' + row.id + ')">语音</a>&nbsp;');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="warnChatMessage(' + row.id + ')">警告</a>&nbsp;');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="disableChatMessage(' + row.id + ')">禁言</a>&nbsp;');
+                        btns.push('<a href="javascript:void(0)" class="easyui-linkbutton primary" onclick="leadChatMessage(' + row.id + ')">指导</a>');
+                        return btns.join('');
+                    }
+                }]
+            ]
+        });
+    })(jQuery, window, document);
+
+
+    function refreshChatMessage() {
+        $('#chatMessageTab').datagrid('reload');
+    }
+
+    /**
+     * 删除
+     * @param id
+     */
+    function delFeedback(id) {
+        $.messager.confirm('提示', '确定删除？', function(r) {
+            if(r) {
+                App.getRequestData('/api/common/feedback/delete', {id: id}, function(data){
+                    App.showMsg('删除成功');
+                    refreshFeedback();
+                });
+            }
+        });
+    }
+
+    /**
+     * 导出用户反馈
+     */
+    function exportChatMessage() {
+        var startDate = $("input[name=chatMessage_startDate]").val();
+        var endDate = $("input[name=chatMessage_endDate]").val();
+        var user = $("input[name=chatMessage_user]").val();
+        var chatroomId = $("input[name=chatMessage_chatroomId]").val();
+        var content = $("input[name=chatMessage_content]").val();
+        var sensitiveWord = $("input[name=chatMessage_sensitiveWord]").val();
+
+        var param = {};
+        param.startDate = startDate;
+        param.endDate = endDate;
+        param.userName = user;
+        param.chatroomId = chatroomId;
+        param.content = content;
+        param.sensitiveWord = sensitiveWord;
+
+        window.location.href = App.generateExportUrl('/api/common/chatMessage/export', param);
+    }
+
+    /**
+     * 语音
+     */
+    function voiceChatMessage() {
+
+    }
+
+    /**
+     * 警告
+     */
+    function warnChatMessage() {
+
+    }
+
+    /**
+     * 禁言
+     */
+    function disableChatMessage() {
+
+    }
+
+    /**
+     * 指导
+     */
+    function leadChatMessage() {
+
+    }
+
+</script>
+
+</body>
+</html>

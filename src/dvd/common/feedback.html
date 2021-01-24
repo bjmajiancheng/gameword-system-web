@@ -18,9 +18,23 @@
             <option value="1">已处理</option>
         </select>
     </div>
+    <div class="search-form-item col-md-4">
+        <label class="label-top">语种：</label>
+        <select name="language" class="easyui-combobox" data-options="editable:false,panelHeight:null" prompt="请输入语种">
+            <option value="" selected>请选择</option>
+            <option value="1">中文</option>
+            <option value="2">英文</option>
+        </select>
+    </div>
+
+    <div class="search-form-item col-md-4">
+        <label class="label-top">城市：</label>
+        <input id="feedback_cityId" name="cityId" class="easyui-combobox" prompt="请输入城市">
+    </div>
 
     <div class="search-form-item col-md-3">
         <a href="javascript:void(0)" onclick="refreshFeedback()" class="easyui-linkbutton primary">查询</a>
+        <a href="javascript:void(0)" onclick="exportFeedback()" class="easyui-linkbutton primary">导出</a>
     </div>
 </div>
 
@@ -82,9 +96,13 @@
             onBeforeLoad: function (param) {
                 var userId = $("input[name=userId]").val();
                 var status = $("input[name=status]").val();
+                var language = $("input[name=language]").val();
+                var cityId = $("input[name=cityId]").val();
 
                 param.userId = userId;
                 param.status = status;
+                param.language = language;
+                param.cityId = cityId;
             },
             columns: [
                 [{
@@ -99,6 +117,22 @@
                 }, {
                     field: 'content',
                     title: '反馈内容',
+                    width: 50
+                }, {
+                    field: 'language',
+                    title: '语种',
+                    width: 50,
+                    formatter: function(value, row, index) {
+                        var languageStr = "中文";
+                        if(row.language == 2) {
+                            languageStr = "英文";
+                        }
+
+                        return languageStr;
+                    }
+                }, {
+                    field: 'cityName',
+                    title: '城市',
                     width: 50
                 }, {
                     field: 'status',
@@ -147,6 +181,21 @@
                 }
                 refreshFeedback();
             }
+        });
+
+        //获取城市信息
+        App.getRequestData("/api/common/city/options", {}, function(data) {
+            data.unshift({value:'', text:'请选择'});
+
+            $("#feedback_cityId").combobox({
+                valueField: 'value',
+                textField: 'text',
+                editable: false,
+                required: true,
+                mode: 'local',
+                value: '',
+                data: data
+            });
         });
 
     })(jQuery, window, document);
@@ -205,6 +254,24 @@
                 });
             }
         });
+    }
+
+    /**
+     * 导出用户反馈
+     */
+    function exportFeedback() {
+        var userId = $("input[name=userId]").val();
+        var status = $("input[name=status]").val();
+        var language = $("input[name=language]").val();
+        var cityId = $("input[name=cityId]").val();
+
+        var param = {};
+        param.userId = userId;
+        param.status = status;
+        param.language = language;
+        param.cityId = cityId;
+
+        window.location.href = App.generateExportUrl('/api/common/feedback/export', param);
     }
 
 </script>
